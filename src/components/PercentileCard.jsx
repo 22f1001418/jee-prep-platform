@@ -1,4 +1,5 @@
 import React, {useState} from "react";
+import {CountUp} from "./motion";
 import {SOURCES, basisText, estimatePercentile, fmtPct, fmtRank, hasShiftTable} from "../lib/percentile";
 
 // Estimated percentile for a score in one paper. Always labelled as an estimate, with its basis and sources.
@@ -11,7 +12,7 @@ export function PercentileCard({paperId, score, compact}){
       <div style={{display:"flex", gap:18, alignItems:"center", flexWrap:"wrap"}}>
         <div>
           <div style={{fontSize:11.5, fontWeight:800, letterSpacing:".07em", color:"var(--text-faint)"}}>ESTIMATED PERCENTILE</div>
-          <div style={{fontSize:30, fontWeight:800, lineHeight:1.1}}>≈ {fmtPct(est.pct)}</div>
+          <div style={{fontSize:30, fontWeight:800, lineHeight:1.1}}>≈ <CountUp value={est.pct} duration={1500} format={fmtPct}/></div>
         </div>
         <div style={{flex:"1 1 220px", fontSize:13.5, color:"var(--text-dim)", lineHeight:1.5}}>
           Likely between <strong style={{color:"var(--text)"}}>{fmtPct(est.lo)}</strong> and <strong style={{color:"var(--text)"}}>{fmtPct(est.hi)}</strong>

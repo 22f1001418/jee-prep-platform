@@ -14,6 +14,18 @@ export function activityDays(){
   Object.values(loadMistakes()).forEach(it => (it.log || []).forEach(l => { if(l.at) days.add(dayNumber(l.at)); }));
   return days;
 }
+// Questions answered on each day: Map(dayNumber -> count). Tests count their answered questions, practice sets their
+// answers, revision one per answer. Used by the activity heatmap.
+export function activityCounts(){
+  const m = new Map(), add = (ts, n) => { if(ts && n > 0){ const d = dayNumber(ts); m.set(d, (m.get(d) || 0) + n); } };
+  loadHistory().forEach(h => {
+    const sn = h && h.snapshot; if(!sn || !sn.perQ) return;
+    add(sn.startedAt, Object.values(sn.perQ).filter(r => r && (r.status === "answered" || r.status === "answered_marked")).length);
+  });
+  practiceLog().sessions.forEach(s => add(s.at, (s.correct || 0) + (s.wrong || 0)));
+  Object.values(loadMistakes()).forEach(it => (it.log || []).forEach(l => add(l.at, 1)));
+  return m;
+}
 // Current streak: consecutive active days ending today, or ending yesterday if today has no activity yet (the streak is still alive).
 export function currentStreak(days, now = Date.now()){
   const today = dayNumber(now);

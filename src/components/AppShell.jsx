@@ -20,7 +20,7 @@ export const NAV = [
 const PARENT = {starredq:"allnotes"};
 const BOTTOM = ["home", "tests", "practice", "mistakes", "history", "allnotes"];
 
-export function AppShell({screen, onNavigate, children}){
+export function AppShell({screen, onNavigate, onEditProfile, onOpenSearch, children}){
   useMistakes();
   const active = PARENT[screen] || screen;
   const due = dueCount();
@@ -42,6 +42,11 @@ export function AppShell({screen, onNavigate, children}){
             <span style={{fontSize:11, fontWeight:600, color:"var(--text-faint)", letterSpacing:".04em"}}>Main practice studio</span>
           </span>
         </div>
+        {onOpenSearch && (
+          <button type="button" className="shell-search" onClick={onOpenSearch} title="Search papers, chapters and screens">
+            <Icon name="search" size={16}/><span>Search</span><kbd>{/Mac|iPhone|iPad/.test(navigator.platform || "") ? "\u2318" : "Ctrl"} K</kbd>
+          </button>
+        )}
         <nav className="shell-nav">
           {groups.map(g => (
             <div key={g} className="shell-group">
@@ -66,11 +71,14 @@ export function AppShell({screen, onNavigate, children}){
               </span>
             </span>
           </button>
-          {profile && (
-            <div className="shell-user">
+          {profile ? (
+            <button type="button" className="shell-user" onClick={onEditProfile} title="Edit your name and photo">
               {profile.photo ? <img src={profile.photo} alt="" className="shell-avatar"/> : <span className="shell-avatar shell-avatar-ph">{profile.name.trim()[0].toUpperCase()}</span>}
               <span className="shell-uname">{profile.name}</span>
-            </div>
+              <Icon name="pencil" size={14} style={{marginLeft:"auto", color:"var(--text-faint)", flexShrink:0}}/>
+            </button>
+          ) : (
+            <button type="button" className="shell-user" onClick={onEditProfile}><span className="shell-uname" style={{color:"var(--text-dim)"}}>Add your name</span></button>
           )}
           <ThemeToggle inline/>
         </div>

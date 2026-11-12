@@ -38,7 +38,7 @@ export function BarRow({label, value, max, color, suffix="", displayValue}){
         <span className="mono" style={{fontWeight:700}}>{displayValue!==undefined ? displayValue : <>{value}{suffix}</>}</span>
       </div>
       <div style={{height:9, background:"var(--border)", borderRadius:5, overflow:"hidden"}}>
-        <div style={{width:`${pct}%`, height:"100%", background:color, borderRadius:5, transition:"width .4s"}}/>
+        <div className="bar-grow" style={{width:`${pct}%`, height:"100%", background:color, borderRadius:5, transition:"width .4s"}}/>
       </div>
     </div>
   );

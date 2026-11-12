@@ -1,12 +1,14 @@
 import {PercentileCard} from "../components/PercentileCard";
 import {addMistakes, attemptKeyOf, loadMistakes, mistakeKey, useMistakes} from "../lib/mistakes";
 import {Icon} from "../components/icons";
+import {CountUp} from "../components/motion";
 import React, {useEffect, useRef, useState} from "react";
 import {BarRow} from "../components/Charts";
 import {Ring, SUBJECT_COLOR, SubjectBadge} from "../components/ui";
 import {exportResultsForAI} from "../lib/aiExport";
 import {SUBJECTS} from "../lib/constants";
 import {getPaper} from "../lib/papers";
+import {loadHistory} from "../lib/persistence";
 import {store} from "../lib/store";
 
 export const LS_CELEBRATED = "jee_cbt_celebrated_v1";
@@ -87,30 +89,44 @@ export function ResultsDashboard({state, result, onViewAnalysis, onReviewWrong, 
   const pu = (getPaper(state.paperId) || {}).percentileUrl;
   const exportTip = "One file for AI: a full analysis brief plus all the data of this exam (score, time, chapters, every question, your notes). Upload it to ChatGPT (or any AI) as it is, and it will analyse your test step by step like a teacher and give you a plan for the next test.";
   const pctOfMax = Math.round(Math.max(0, result.totalScore) / max * 100);
+  // Confetti is for a result worth celebrating: a positive score that is your first, or at least your average so far.
+  const [{celebrate, best, delta}] = useState(()=>{
+    const prev = loadHistory().filter(h=>h && h.snapshot && h.snapshot.startedAt < state.startedAt && typeof h.score==="number").map(h=>h.score);
+    const avg = prev.length ? prev.reduce((a, b)=>a + b, 0) / prev.length : null;
+    return {
+      celebrate: result.totalScore > 0 && (avg===null || result.totalScore >= avg),
+      best: result.totalScore > 0 && prev.length > 0 && result.totalScore > Math.max(...prev),   // beats every earlier test
+      delta: avg===null ? null : Math.round(result.totalScore - avg),                               // against your average before this test
+    };
+  });
   const chip = (icon, label, value, cls) => (
     <div className="card" style={{padding:"12px 14px", display:"flex", alignItems:"center", gap:11}}>
       <span className={"chip " + cls} style={{width:34, height:34, padding:0, justifyContent:"center", borderRadius:10}}><Icon name={icon} size={17}/></span>
-      <div><div className="num" style={{fontSize:20, lineHeight:1.1}}>{value}</div><div style={{fontSize:12, color:"var(--text-dim)"}}>{label}</div></div>
+      <div><div className="num" style={{fontSize:20, lineHeight:1.1}}>{typeof value==="number" ? <CountUp value={value} duration={1100}/> : value}</div><div style={{fontSize:12, color:"var(--text-dim)"}}>{label}</div></div>
     </div>
   );
   return (
     <div className="rs-bg">
-      <Confetti attemptKey={`${state.paperId}:${state.startedAt}`}/>
+      {celebrate && <Confetti attemptKey={`${state.paperId}:${state.startedAt}`}/>}
       <div className="page stagger" style={{maxWidth:980}}>
         <div style={{marginBottom:20}}>
-          <span className="chip chip-good" style={{marginBottom:10}}><Icon name="check-circle" size={14}/> Test complete</span>
+          <div style={{display:"flex", gap:8, flexWrap:"wrap", marginBottom:10}}>
+            <span className="chip chip-good"><Icon name="check-circle" size={14}/> Test complete</span>
+            {best && <span className="chip chip-best"><Icon name="trophy" size={14}/> New personal best</span>}
+            {delta!==null && delta!==0 && <span className={"chip " + (delta>0 ? "chip-good" : "chip-bad")}><Icon name="trending-up" size={14} style={delta<0 ? {transform:"scaleY(-1)"} : null}/> {delta>0 ? "+" : "−"}{Math.abs(delta)} vs your average</span>}
+          </div>
           <h1 style={{margin:0, fontSize:28}}>{state.testName}</h1>
         </div>
 
-        <div className="card" style={{padding:"26px 28px", marginBottom:16, display:"flex", gap:28, alignItems:"center", flexWrap:"wrap",
+        <div className="card score-card" style={{padding:"26px 28px", marginBottom:16, display:"flex", gap:28, alignItems:"center", flexWrap:"wrap",
           background:"linear-gradient(135deg, color-mix(in srgb, var(--brand) 9%, var(--panel)), var(--panel) 60%)"}}>
           <Ring value={Math.max(0, result.totalScore)} max={max} size={176} stroke={14} color="url(#scoreGrad)" label={`Score ${result.totalScore} out of ${max}`}>
             <svg width="0" height="0" style={{position:"absolute"}}><defs><linearGradient id="scoreGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#4d74f2"/><stop offset="1" stopColor="#8a5df0"/></linearGradient></defs></svg>
-            <span className="num" style={{fontSize:46, lineHeight:1}}>{result.totalScore}</span>
+            <span className="num" style={{fontSize:46, lineHeight:1}}><CountUp value={result.totalScore} duration={1400}/></span>
             <span style={{fontSize:13, color:"var(--text-faint)", fontWeight:650}}>out of {max}</span>
           </Ring>
           <div style={{flex:"1 1 320px", display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(150px, 1fr))", gap:10}}>
-            {chip("target", "accuracy", `${result.accuracy.toFixed(1)}%`, "chip-soft")}
+            {chip("target", "accuracy", <><CountUp value={result.accuracy} duration={1100} format={v=>v.toFixed(1)}/>%</>, "chip-soft")}
             {chip("check-circle", "correct", result.correct, "chip-good")}
             {chip("x-circle", "incorrect", result.wrong, "chip-bad")}
             {chip("minus", "unattempted", result.unattempted, "")}
@@ -130,7 +146,7 @@ export function ResultsDashboard({state, result, onViewAnalysis, onReviewWrong, 
                 <div style={{display:"flex", alignItems:"center", gap:11, marginBottom:12}}>
                   <SubjectBadge subject={s} size={38}/>
                   <div style={{flex:1}}><div style={{fontWeight:800, fontSize:15.5}}>{s}</div><div style={{fontSize:12, color:"var(--text-faint)"}}>{b.correct} right · {b.wrong} wrong · {b.unattempted} blank</div></div>
-                  <div style={{textAlign:"right"}}><div className="num" style={{fontSize:22, lineHeight:1}}>{b.score}</div><div style={{fontSize:11, color:"var(--text-faint)"}}>of {b.max || 100}</div></div>
+                  <div style={{textAlign:"right"}}><div className="num" style={{fontSize:22, lineHeight:1}}><CountUp value={b.score} duration={1200}/></div><div style={{fontSize:11, color:"var(--text-faint)"}}>of {b.max || 100}</div></div>
                 </div>
                 <BarRow label="Score" value={Math.max(0, b.score)} max={b.max || 100} color={SUBJECT_COLOR[s]} displayValue={`${b.score}/${b.max || 100}`}/>
                 <BarRow label="Accuracy" value={Math.round(b.accuracy)} max={100} color="var(--correct)" suffix="%"/>
