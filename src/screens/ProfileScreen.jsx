@@ -40,9 +40,11 @@ export function compressAvatar(file){
     reader.readAsDataURL(file);
   });
 }
-export function ProfileScreen({onSave, onBack}){
-  const [name, setName] = useState("");
-  const [photo, setPhoto] = useState(null);
+// edit=true: reached later from the sidebar / Home to change the name or photo (pre-filled, no "welcome" wording).
+export function ProfileScreen({onSave, onBack, edit}){
+  const [saved] = useState(()=>edit ? loadProfile() : null);
+  const [name, setName] = useState(saved ? saved.name : "");
+  const [photo, setPhoto] = useState(saved ? saved.photo || null : null);
   const [err, setErr] = useState("");
   async function pick(e){
     const f = e.target.files && e.target.files[0];
@@ -60,8 +62,8 @@ export function ProfileScreen({onSave, onBack}){
       <div style={{maxWidth:460, width:"100%"}}>
         <button className="btn" onClick={onBack} style={{marginBottom:18}}><Icon name="arrow-left" size={16}/> Back</button>
         <div className="card" style={{padding:"28px 30px"}}>
-          <h2 style={{marginTop:0, fontWeight:400, fontFamily:"var(--font-head)"}}>Welcome! Set up your candidate profile</h2>
-          <p style={{fontSize:14, color:"var(--text-dim)", marginTop:-4}}>Asked only once. Your name and photo appear on the exam screen, like the real CBT.</p>
+          <h2 style={{marginTop:0, fontWeight:400, fontFamily:"var(--font-head)"}}>{edit ? "Your candidate profile" : "Welcome! Set up your candidate profile"}</h2>
+          <p style={{fontSize:14, color:"var(--text-dim)", marginTop:-4}}>{edit ? "Your name and photo appear on the exam screen, like the real CBT." : "Your name and photo appear on the exam screen, like the real CBT. You can change them later from Home."}</p>
           <div style={{display:"flex", alignItems:"center", gap:16, margin:"18px 0"}}>
             <div style={{width:84, height:84, borderRadius:4, overflow:"hidden", background:"#cfd8e0", flex:"0 0 84px", border:"1px solid var(--border)"}}>
               {photo ? <img src={photo} alt="Your photo" style={{width:"100%", height:"100%", objectFit:"cover"}}/> : (
@@ -76,6 +78,7 @@ export function ProfileScreen({onSave, onBack}){
               {photo ? "Change photo" : "Add photo (optional)"}
               <input type="file" accept="image/*" onChange={pick} style={{display:"none"}}/>
             </label>
+            {photo && <button type="button" className="btn" onClick={()=>setPhoto(null)}>Remove</button>}
           </div>
           <label style={{display:"block", fontSize:13, fontWeight:700, color:"var(--text-dim)", marginBottom:6}}>Your name</label>
           <input type="text" value={name} maxLength={40} autoFocus
@@ -85,7 +88,7 @@ export function ProfileScreen({onSave, onBack}){
             style={{width:"100%", boxSizing:"border-box", fontSize:16, padding:"10px 12px", border:"1px solid var(--border-dark)", borderRadius:4, background:"var(--panel)", color:"var(--text)"}}/>
           {err && <div style={{color:"var(--wrong)", fontSize:13, marginTop:8}}>{err}</div>}
           <div style={{marginTop:22}}>
-            <button className="btn btn-primary" onClick={submit}>Save &amp; Continue</button>
+            <button className="btn btn-primary" onClick={submit}>{edit ? "Save" : "Save & Continue"}</button>
           </div>
         </div>
       </div>

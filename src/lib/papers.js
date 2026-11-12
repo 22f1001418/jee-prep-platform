@@ -35,13 +35,49 @@ export function sortPapersNewestFirst(papers){
 // Physics -> Chemistry, and inside each subject MCQ first, then Numerical, each in
 // the paper's own question-number order. For papers that already follow this
 // (Maths Q1-25, Physics Q26-50, Chemistry Q51-75) nothing changes.
+// The bank was tagged paper by paper, so the same chapter sometimes has two names ("Definite Integrals" /
+// "Definite Integration"). Every variant is folded into one name here, so chapter analysis, weakest chapters
+// and the practice filters count them together. Keys are "Subject|name as it appears in the data".
+export const CHAPTER_ALIASES = {
+  "Mathematics|Definite Integrals": "Definite Integration",
+  "Mathematics|Matrices": "Matrices & Determinants",
+  "Mathematics|Inverse Trigonometric Functions": "Inverse Trigonometry",
+  "Mathematics|Limits & Continuity": "Limits",
+  "Mathematics|Conic Sections (Parabola)": "Conic Sections",
+  "Mathematics|Sets & Relations": "Relations & Functions",
+  "Mathematics|Sets, Relations & Functions": "Relations & Functions",
+  "Mathematics|Functions": "Relations & Functions",
+  "Mathematics|Trigonometric Equations": "Trigonometry",
+  "Mathematics|Application of Integrals": "Area Under Curves",
+  "Mathematics|Application of Derivatives": "Differential Calculus",
+  "Mathematics|Logarithms": "Logarithms & Equations",
+  "Physics|Rotational Motion": "Rotational Mechanics",
+  "Physics|Newton's Laws": "Laws of Motion",
+  "Physics|Newton's Laws / Systems": "Laws of Motion",
+  "Physics|Simple Harmonic Motion": "Oscillations",
+  "Physics|Ray Optics": "Optics",
+  "Physics|Wave Optics": "Optics",
+  "Physics|Atoms": "Modern Physics",
+  "Physics|Dual Nature of Matter": "Modern Physics",
+  "Physics|Capacitors": "Electrostatics",
+  "Physics|Error Analysis": "Measurement",
+  "Physics|Fluid Mechanics / Surface Tension": "Fluid Mechanics",
+  "Chemistry|f-Block Elements": "d and f Block Elements",
+  "Chemistry|Equilibrium / Stoichiometry": "Equilibrium",
+  "Chemistry|Nuclear Chemistry / Biology": "Nuclear Chemistry",
+  "Chemistry|Periodic Table": "Periodic Properties",
+};
+export function canonicalChapter(subject, chapter){ return CHAPTER_ALIASES[`${subject}|${chapter}`] || chapter; }
 export function normalizePaper(p){
   const SO = {Mathematics:0, Physics:1, Chemistry:2}, TO = {MCQ:0, NUM:1};
   const qs = [...p.questions].sort((a,b)=>
     ((SO[a.subject] ?? 9) - (SO[b.subject] ?? 9)) || ((TO[a.type] ?? 9) - (TO[b.type] ?? 9)) || (a.n - b.n));
   // show the exam day always with two digits ("8 Apr Shift 2" -> "08 Apr Shift 2")
   const noZero = t => typeof t === "string" ? t.replace(/(?<![\w])(\d)(?=\s+[A-Za-z]{3,9}\b)/g, "0$1") : t;
-  return {...p, name: noZero(p.name), shortName: noZero(p.shortName), questions: qs};
+  return {...p, name: noZero(p.name), shortName: noZero(p.shortName), questions: qs.map(q=>{
+    const c = canonicalChapter(q.subject, q.chapter);
+    return c === q.chapter ? q : {...q, chapter: c};
+  })};
 }
 export const PAPER_REGISTRY = sortPapersNewestFirst(RAW_PAPERS).map(normalizePaper);
 export const LS_SELECTED_PAPER = "jee_cbt_selected_paper_v1";
@@ -119,6 +155,22 @@ export function paperMissing(id){ return !!id && !PAPER_REGISTRY.some(p=>p.id===
 // Marking is fixed for every paper: +4 / -1 / 0 (numericals included).
 export function numAttemptLimit(paper){ const f = paper && paper.format; return f && Number.isFinite(f.numToAttempt) ? f.numToAttempt : null; }
 export function numWrongMarks(paper){ return MARKS_WRONG; }
+// How many questions actually count towards the score: on "answer any 5 of 10" papers the optional numericals
+// are left out, so a 90-question paper is still 75 scored questions and 300 marks.
+// Returns {total, bySubject:{Mathematics:n, ...}}.
+export function scoredCounts(paper){
+  const limit = numAttemptLimit(paper), bySubject = {};
+  (paper ? paper.questions : []).forEach(q=>{ const e = bySubject[q.subject] || (bySubject[q.subject] = {mcq:0, num:0}); if(q.type==="NUM") e.num++; else e.mcq++; });
+  let total = 0;
+  Object.keys(bySubject).forEach(s=>{ const e = bySubject[s]; const n = e.mcq + (limit!=null ? Math.min(e.num, limit) : e.num); bySubject[s] = n; total += n; });
+  return {total, bySubject};
+}
+// Short label that still says which year: "31 Jan Shift 2 (2024)". The same date and shift exist in several years.
+export function paperTag(paper){
+  if(!paper) return "";
+  const y = (/^jee-(\d{4})/i.exec(paper.id || "") || [])[1], s = paper.shortName || paper.name || "";
+  return y && !s.includes(y) ? `${s} (${y})` : s;
+}
 export function getSelectedPaperId(){
   try{
     const saved = store.getItem(LS_SELECTED_PAPER);

@@ -28,13 +28,13 @@ export function PreviewScreen({onStart, onBack}){
         <div className="card" style={{padding:"28px 28px 8px"}}>
           <div style={{display:"flex", alignItems:"center", gap:10, marginBottom:4}}>
             <div style={{width:10,height:10,borderRadius:"50%", background:"var(--answered)"}}/>
-            <span style={{fontFamily:"var(--font-body)"}}>PDF successfully processed</span>
+            <span style={{fontFamily:"var(--font-body)"}}>Paper ready</span>
           </div>
           <h2 style={{margin:"14px 0 20px", fontSize:22, fontWeight:400, fontFamily:"var(--font-head)"}}>{paper.name}</h2>
 
           <div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:"14px 24px", marginBottom:24}}>
-            <Stat label="Questions found" value={RAW_QUESTIONS.length} plain/>
-            <Stat label="Answer key found" value="Yes" good plain/>
+            <Stat label="Questions" value={RAW_QUESTIONS.length} plain/>
+            <Stat label="Answer key" value="Included" good plain/>
             {SUBJECTS.map(s=>{
               const ns = RAW_QUESTIONS.filter(q=>q.subject===s).map(q=>q.n);
               return <Stat key={s} label={s} value={`${counts[s]} (Q${Math.min(...ns)}–Q${Math.max(...ns)})`} plain/>;

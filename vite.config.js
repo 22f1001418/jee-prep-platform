@@ -63,4 +63,5 @@ export default defineConfig(({ mode }) => ({
     }),
   ],
   build: { chunkSizeWarningLimit: 1600 },
+  test: { environment: "node", include: ["tests/**/*.test.js"] },
 }));

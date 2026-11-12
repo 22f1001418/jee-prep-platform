@@ -12,7 +12,7 @@ import {
   CAUSES, CAUSE_BY_ID, INTERVAL_DAYS, attemptRows, bookSummary, causeCounts, dueItems, dueLabel, fmtShortDate, latestCause, latestHit,
   loadMistakes, recordReview, removeMistakes, setCause, setRule, setStatus, upcomingByDay, upcomingItems, useMistakes,
 } from "../lib/mistakes";
-import {getPaper, paperMissing} from "../lib/papers";
+import {getPaper, paperMissing, paperTag} from "../lib/papers";
 import {loadHistory} from "../lib/persistence";
 import {answerText, isAnswerCorrect, isOptionCorrect} from "../lib/scoring";
 
@@ -98,14 +98,13 @@ function Session({keys, onDone}){
     <div>
       <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:8, fontSize:13, color:"var(--text-dim)"}}>
         <span>Question {Math.min(pos + 1, queue.length)} of {queue.length}{retried.has(it.key) && fb===null && outcomes.some(o=>o.key===it.key) ? " · second try" : ""}</span>
-        <button className="btn" onClick={onDone} style={{padding:"4px 10px", fontSize:12.5}}>End session</button>
       </div>
       <div style={{height:6, background:"var(--border)", borderRadius:3, overflow:"hidden", marginBottom:14}}>
         <div style={{width:`${done/queue.length*100}%`, height:"100%", background:"var(--navy)", transition:"width .25s"}}/>
       </div>
       <div className="card" style={{padding:20, borderLeft:`4px solid ${SUBJECT_COLOR[it.subject] || "var(--navy)"}`}}>
         <div style={{fontSize:12, color:"var(--text-faint)", marginBottom:10}}>
-          {it.subject} · {it.chapter} · {paper.shortName || paper.name} · Q{it.n}{it.lapses>0 ? ` · slipped ${it.lapses}×` : ""}
+          {it.subject} · {it.chapter} · {paperTag(paper)} · Q{it.n}{it.lapses>0 ? ` · slipped ${it.lapses}×` : ""}
         </div>
         <QuestionView q={q} resp={resp} onResp={setResp} reveal={!!fb} disabled={!!fb} autoFocus/>
 
@@ -222,7 +221,7 @@ function MistakeRow({it, onPractise}){
         onKeyDown={e=>{ if(e.key==="Enter" || e.key===" "){ e.preventDefault(); setOpen(o=>!o); } }}
         style={{display:"flex", gap:10, alignItems:"center", cursor:"pointer", flexWrap:"wrap"}}>
         <div style={{flex:"1 1 260px", minWidth:0}}>
-          <div style={{fontWeight:700, fontSize:14}}>{it.chapter} <span style={{fontWeight:400, color:"var(--text-faint)"}}>· {it.subject} · Q{it.n} · {paper ? (paper.shortName || paper.name) : it.paperId}</span></div>
+          <div style={{fontWeight:700, fontSize:14}}>{it.chapter} <span style={{fontWeight:400, color:"var(--text-faint)"}}>· {it.subject} · Q{it.n} · {paper ? paperTag(paper) : it.paperId}</span></div>
           <div style={{fontSize:12, color:"var(--text-faint)", marginTop:2}}>
             Missed {it.misses}×{it.lapses>0 ? ` · slipped in revision ${it.lapses}×` : ""} · {it.type==="NUM" ? "Numerical" : "MCQ"}
           </div>

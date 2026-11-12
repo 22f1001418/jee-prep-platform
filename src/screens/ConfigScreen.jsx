@@ -1,13 +1,15 @@
 import {Icon} from "../components/icons";
 import React, {useState} from "react";
-import {MARKS_WRONG} from "../lib/constants";
-import {numAttemptLimit, numWrongMarks, usePaper} from "../lib/papers";
+import {MARKS_CORRECT, MARKS_WRONG, SUBJECTS} from "../lib/constants";
+import {numAttemptLimit, numWrongMarks, scoredCounts, usePaper} from "../lib/papers";
 import {Stat} from "./PreviewScreen";
 
 // ---------- Exam configuration ----------
 export function ConfigScreen({onBegin, onBack}){
   const paper = usePaper();
-  const counts = {Mathematics:25, Physics:25, Chemistry:25};
+  const scored = scoredCounts(paper), limit = numAttemptLimit(paper);
+  const shown = s => paper.questions.filter(q=>q.subject===s).length;
+  const subjLine = s => limit!=null && shown(s)!==scored.bySubject[s] ? `${scored.bySubject[s]} Qs to answer (${shown(s)} shown)` : `${scored.bySubject[s] || 0} Qs`;
   return (
     <div style={{minHeight:"100vh", padding:"50px 20px", display:"flex", justifyContent:"center"}}>
       <div style={{maxWidth:600, width:"100%"}}>
@@ -16,11 +18,9 @@ export function ConfigScreen({onBegin, onBack}){
           <h2 style={{marginTop:0, fontWeight:400, fontFamily:"var(--font-head)"}}>Exam Configuration</h2>
           <div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:"16px 24px", margin:"20px 0 26px"}}>
             <Stat label="Test Name" value={paper.name} plain/>
-            <Stat label="Number of Questions" value="75" plain/>
-            <Stat label="Mathematics" value="25 Qs" plain/>
-            <Stat label="Physics" value="25 Qs" plain/>
-            <Stat label="Chemistry" value="25 Qs" plain/>
-            <Stat label="Total Marks" value="300" plain/>
+            <Stat label="Number of Questions" value={paper.questions.length!==scored.total ? `${scored.total} to answer (${paper.questions.length} shown)` : String(scored.total)} plain/>
+            {SUBJECTS.map(s=><Stat key={s} label={s} value={subjLine(s)} plain/>)}
+            <Stat label="Total Marks" value={String(scored.total * MARKS_CORRECT)} plain/>
             <Stat label="Duration" value="180 minutes" plain/>
             <Stat label="Marking" value={numWrongMarks(paper)===MARKS_WRONG ? "+4 / −1 / 0" : `+4 / −1 / 0 (numerical: +4 / ${numWrongMarks(paper)} / 0)`} plain/>
           </div>
@@ -37,7 +37,7 @@ export function ConfigScreen({onBegin, onBack}){
             {numAttemptLimit(paper)!=null && (
               <li>Each subject's Numerical section shows more questions than you may answer: answer any <strong>{numAttemptLimit(paper)}</strong> in each subject. Once you have answered {numAttemptLimit(paper)}, the others are locked until you clear one of your answers. Numericals you do not choose are not scored; they are listed separately in the analysis.</li>
             )}
-            <li>The exam auto-submits when the timer reaches 00:00:00.</li>
+            <li>The exam auto-submits when the timer reaches 0:00.</li>
           </ul>
           <label style={{display:"flex", alignItems:"center", gap:8, fontSize:14, marginTop:16}}>
             <ConfirmCheckbox onReady={onBegin}/>

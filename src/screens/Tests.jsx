@@ -1,7 +1,7 @@
 import React, {useMemo, useState} from "react";
 import {Icon} from "../components/icons";
 import {PageHeader} from "../components/ui";
-import {PAPER_REGISTRY} from "../lib/papers";
+import {PAPER_REGISTRY, scoredCounts} from "../lib/papers";
 import {loadHistory} from "../lib/persistence";
 
 const yearOf = p => { const m = /^jee-(\d{4})-/.exec(p.id); return m ? m[1] : "Other"; };
@@ -74,7 +74,7 @@ export function Tests({onStartPaper, onResume, hasActive}){
                   </span>
                   <div style={{flex:"1 1 200px", minWidth:0}}>
                     <div style={{fontWeight:700, fontSize:14.5}}>{p.shortName || p.name}</div>
-                    <div style={{fontSize:12.5, color:"var(--text-faint)", marginTop:1}}>{p.questions.length} questions · {Math.round(p.questions.length * 4)} marks</div>
+                    <div style={{fontSize:12.5, color:"var(--text-faint)", marginTop:1}}>{(()=>{ const sc = scoredCounts(p).total; return sc!==p.questions.length ? `${p.questions.length} questions (answer ${sc}) · ${sc * 4} marks` : `${sc} questions · ${sc * 4} marks`; })()}</div>
                   </div>
                   {s ? (
                     <div style={{display:"flex", gap:8, flexWrap:"wrap", alignItems:"center"}}>

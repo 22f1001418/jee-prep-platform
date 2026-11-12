@@ -38,8 +38,19 @@ export function isAnswerCorrect(q, response){
     }
     // both the typed answer and the key are ROUNDED to the nearest whole number (.5 goes away from zero) before comparing:
     // 5.4 -> 5, 5.5 -> 6, -5.5 -> -6. So a key of 5 accepts 4.5 up to 5.49..., and a key of 5.9 is treated as 6.
+    // A key that is itself a decimal (3.33, 282.84, 78.25) is stricter: the typed answer must match at the key's own
+    // precision (3.33), or be the key rounded to a whole number typed as a whole number (3). 3.4 or 2.9 is wrong.
     const rnd = x => Math.sign(x) * Math.round(Math.abs(x));
-    return acceptedAnswers(q).some(a=>{ const v = parseFloat(a); return !isNaN(v) && rnd(given) === rnd(v); });
+    return acceptedAnswers(q).some(a=>{
+      const v = parseFloat(a); if(isNaN(v)) return false;
+      const dec = (String(a).trim().split(".")[1] || "").replace(/0+$/, "").length;
+      if(dec > 0){
+        const k = Math.pow(10, dec);
+        if(Math.abs(Math.round(given * k) - Math.round(v * k)) < 1e-6) return true;
+        return Number.isInteger(given) && given === rnd(v);
+      }
+      return rnd(given) === rnd(v);
+    });
   }
   return acceptedAnswers(q).includes(String(response));
 }

@@ -7,6 +7,7 @@ import {BarRow} from "../components/Charts";
 import {fmtMinSec} from "../lib/constants";
 import {answeredCount, buildPool, createSession, finishSession, loadSession, poolContext, questionByKey, saveSession, summarise} from "../lib/practice";
 import {answerText, isAnswerCorrect} from "../lib/scoring";
+import {paperTag} from "../lib/papers";
 
 const SUBJECT_COLOR = {Mathematics:"#3f7cc4", Physics:"#e08a2c", Chemistry:"#2e9e5b"};
 const MAX_GAP_SEC = 300;   // time away from the tab (more than 5 minutes) is not counted as thinking time
@@ -110,7 +111,7 @@ function Runner({initial, onFinished, onExit}){
       <div className="card" style={{padding:20, borderLeft:`4px solid ${SUBJECT_COLOR[q.subject] || "var(--navy)"}`}}>
         <div style={{fontSize:12, color:"var(--text-faint)", marginBottom:10}}>
           {q.subject} · {q.chapter} · {q.type==="NUM" ? "Numerical" : "MCQ"}
-          {learn && checked ? ` · ${paper.shortName || paper.name} Q${info.n}` : ""}
+          {learn && checked ? ` · ${paperTag(paper)} Q${info.n}` : ""}
         </div>
         <QuestionView q={q} resp={ans.resp} onResp={setResp} reveal={learn && checked} disabled={learn && checked} autoFocus/>
 
@@ -210,7 +211,7 @@ function Results({session, onAgain, onSetup, onOpenMistakes}){
           return (
             <div key={r.key} className="card" style={{padding:18, borderLeft:`4px solid ${color}`}}>
               <div style={{display:"flex", justifyContent:"space-between", fontSize:12, color:"var(--text-faint)", marginBottom:8, gap:8, flexWrap:"wrap"}}>
-                <span>{r.subject} · {r.chapter} · {info.paper.shortName || info.paper.name} Q{r.n}</span>
+                <span>{r.subject} · {r.chapter} · {paperTag(info.paper)} Q{r.n}</span>
                 <span>Time: {fmtMinSec(r.secs)}</span>
               </div>
               <QuestionView q={info.q} resp={r.resp} reveal disabled onResp={()=>{}}/>

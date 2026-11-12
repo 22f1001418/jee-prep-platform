@@ -1,5 +1,6 @@
 import React from "react";
 import {STATUS} from "../lib/constants";
+import {getPaper, scoredCounts} from "../lib/papers";
 import {Stat} from "../screens/PreviewScreen";
 
 // ---------- Overwrite-active-attempt confirmation modal ----------
@@ -32,7 +33,7 @@ export function ExitModal({onCancel, onConfirm, used}){
       <div className="card" style={{maxWidth:340, width:"100%", padding:"18px 20px"}}>
         <div style={{fontWeight:700, fontSize:16, marginBottom:6}}>Exit the test?</div>
         {left > 0 ? (
-          <div style={{fontSize:13, color:"var(--text-dim)"}}>Progress is saved. Exits left: <strong>{left}</strong> of {MAX_EXITS}.</div>
+          <div style={{fontSize:13, color:"var(--text-dim)", lineHeight:1.5}}>Progress is saved and the clock stops while you are away. Exits left: <strong>{left}</strong> of {MAX_EXITS}. Closing or reloading the tab also uses one.</div>
         ) : (
           <div style={{fontSize:13, color:"var(--not-answered)", fontWeight:600}}>No exits left. Exiting now will submit your test.</div>
         )}
@@ -49,14 +50,15 @@ export function ExitModal({onCancel, onConfirm, used}){
 export function SubmitModal({state, onCancel, onConfirm}){
   const perQ = state.perQ;
   const attempted = Object.values(perQ).filter(r=>r.status===STATUS.ANSWERED||r.status===STATUS.ANSWERED_MARKED).length;
-  const notAttempted = 75 - attempted;
+  const total = scoredCounts(getPaper(state.paperId)).total;   // 75 even on the 90-question "answer any 5 of 10" papers
+  const notAttempted = Math.max(0, total - attempted);
   const marked = Object.values(perQ).filter(r=>r.status===STATUS.MARKED||r.status===STATUS.ANSWERED_MARKED).length;
   return (
     <div style={{position:"fixed", inset:0, background:"rgba(10,16,24,0.55)", display:"flex", alignItems:"center", justifyContent:"center", zIndex:50, padding:20}}>
       <div className="card" style={{maxWidth:440, width:"100%", padding:28}}>
         <h3 style={{marginTop:0}}>Are you sure you want to submit the test?</h3>
         <div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:"10px 20px", margin:"18px 0"}}>
-          <Stat label="Total Questions" value={75}/>
+          <Stat label="Total Questions" value={total}/>
           <Stat label="Attempted" value={attempted}/>
           <Stat label="Not Attempted" value={notAttempted}/>
           <Stat label="Marked for Review" value={marked}/>

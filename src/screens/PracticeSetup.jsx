@@ -1,5 +1,5 @@
 import {PageHeader} from "../components/ui";
-import {SUBJECT_ICON} from "../components/icons";
+import {Icon, SUBJECT_ICON} from "../components/icons";
 import React, {useMemo, useState} from "react";
 import {SUBJECTS} from "../lib/constants";
 import {fmtShortDate} from "../lib/mistakes";

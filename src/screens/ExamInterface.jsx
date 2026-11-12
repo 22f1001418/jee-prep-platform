@@ -23,6 +23,13 @@ export function ExamInterface({state, setState, onSubmitRequest, onExitRequest, 
     (perQ[q.n].status===STATUS.ANSWERED || perQ[q.n].status===STATUS.ANSWERED_MARKED)).length;
   const numLocked = !!currentQObj && currentQObj.type==="NUM" && numLimit!=null && answeredNumOthers>=numLimit;
   const [numInput, setNumInput] = useState(perQ[current].response || "");
+  // An option that has been clicked but not yet saved. Like the real CBT (and like the numerical box), a choice only
+  // counts once Save & Next / Mark for Review is pressed; moving to another question without saving drops it and the
+  // previously saved answer (if any) stays. undefined = nothing picked since this question was opened.
+  const [pick, setPick] = useState(undefined);
+  const isSavedStatus = st => st===STATUS.ANSWERED || st===STATUS.ANSWERED_MARKED;
+  const savedResponse = isSavedStatus(perQ[current].status) ? perQ[current].response : null;
+  const shownResponse = pick !== undefined ? pick : savedResponse;
   const [profile] = useState(()=>loadProfile());
   const [starList, setStarList] = useState(()=>loadStarQ());
   const isStarred = starList.some(x=>x.paperId===paper.id && x.n===current);
@@ -44,6 +51,7 @@ export function ExamInterface({state, setState, onSubmitRequest, onExitRequest, 
       return {...prev, perQ: pq};
     });
     setNumInput(perQ[current].response || "");
+    setPick(undefined);
     // eslint-disable-next-line
   }, [current]);
 
@@ -87,7 +95,7 @@ export function ExamInterface({state, setState, onSubmitRequest, onExitRequest, 
     window.addEventListener("keydown", onKey);
     return ()=>window.removeEventListener("keydown", onKey);
     // eslint-disable-next-line
-  }, [current, numInput, state, modalOpen]);
+  }, [current, numInput, pick, state, modalOpen]);
 
   function updateRec(qn, patch){
     setState(prev=>{
@@ -100,7 +108,7 @@ export function ExamInterface({state, setState, onSubmitRequest, onExitRequest, 
   }
 
   function selectOption(optId){
-    updateRec(current, {response: optId});
+    setPick(optId);
   }
 
   // "Save & Next" always resolves to plain Answered (or Not Answered) —
@@ -135,9 +143,8 @@ export function ExamInterface({state, setState, onSubmitRequest, onExitRequest, 
   function saveAndNext(){
     const rec = perQ[current];
     const isNum = currentQObj.type === "NUM";
-    const response = isNum ? cleanNumInput(numInput) : rec.response;
+    const response = isNum ? cleanNumInput(numInput) : shownResponse;
     if(isNum && response!==null && numLocked) return; // limit reached: clear another numerical answer first
-    if(isNum && response !== rec.response) updateRec(current, {response});
     const hasResponse = response !== null && response !== undefined && response !== "";
     const newStatus = computeStatusAfterSave(hasResponse);
     updateRec(current, {status:newStatus, response});
@@ -146,7 +153,7 @@ export function ExamInterface({state, setState, onSubmitRequest, onExitRequest, 
   function markForReview(){
     const rec = perQ[current];
     const isNum = currentQObj.type === "NUM";
-    const response = isNum ? cleanNumInput(numInput) : rec.response;
+    const response = isNum ? cleanNumInput(numInput) : shownResponse;
     if(isNum && response!==null && numLocked) return; // limit reached: clear another numerical answer first
     const hasResponse = response !== null && response !== undefined && response !== "";
     const newStatus = hasResponse ? STATUS.ANSWERED_MARKED : STATUS.MARKED;
@@ -158,6 +165,16 @@ export function ExamInterface({state, setState, onSubmitRequest, onExitRequest, 
     const wasMarked = rec.status === STATUS.MARKED || rec.status === STATUS.ANSWERED_MARKED;
     updateRec(current, {response:null, status: wasMarked ? STATUS.MARKED : STATUS.NOT_ANSWERED});
     setNumInput("");
+    setPick(undefined);
+  }
+  // On-screen keypad for numerical answers (the real CBT has one; it also helps on phones and tablets).
+  function keypad(k){
+    setNumInput(v=>{
+      if(k==="back") return v.slice(0, -1);
+      if(k==="clear") return "";
+      const next = k==="-" ? (v.startsWith("-") ? v.slice(1) : "-" + v) : v + k;
+      return /^-?\d*\.?\d*$/.test(next) && next.length <= 14 ? next : v;
+    });
   }
 
   const subjectProgress = SUBJECTS.map(s=>{
@@ -171,7 +188,6 @@ export function ExamInterface({state, setState, onSubmitRequest, onExitRequest, 
 
   const totalAttempted = Object.values(perQ).filter(r=>r.status===STATUS.ANSWERED||r.status===STATUS.ANSWERED_MARKED).length;
   const totalMarked = Object.values(perQ).filter(r=>r.status===STATUS.MARKED||r.status===STATUS.ANSWERED_MARKED).length;
-  const totalNotAnswered = 75 - totalAttempted;
 
   const timeLow = state.remaining < 300;
   const qIdxInSubject = subjQuestions.findIndex(q=>q.n===current);
@@ -285,7 +301,7 @@ export function ExamInterface({state, setState, onSubmitRequest, onExitRequest, 
             {currentQObj.type === "MCQ" ? (
               <div className="cbt-options">
                 {currentQObj.options.map(opt=>{
-                  const selected = perQ[current].response === opt.id;
+                  const selected = shownResponse === opt.id;
                   return (
                     <label key={opt.id} className={"cbt-opt"+(/\\(?:d|t)?frac|\\sqrt|\\begin|\\int|\\sum|\\lim|\\binom|\\overset|\\underset/.test(opt.text)?" tall":"")} onClick={()=>selectOption(opt.id)}>
                       <span className={"cbt-radio"+(selected?" on":"")}>{selected && <span/>}</span>
@@ -310,6 +326,13 @@ export function ExamInterface({state, setState, onSubmitRequest, onExitRequest, 
                     border:"1px solid #8a8a8a", borderRadius:2, padding:"8px 10px",
                   }}
                 />
+                <div className="cbt-keypad" aria-label="Number keypad">
+                  {["1","2","3","4","5","6","7","8","9","-","0","."].map(k=>(
+                    <button key={k} type="button" onClick={()=>keypad(k)} aria-label={k==="-" ? "plus or minus" : k==="." ? "decimal point" : k}>{k==="-" ? "+/\u2212" : k}</button>
+                  ))}
+                  <button type="button" className="wide" onClick={()=>keypad("back")}>Backspace</button>
+                  <button type="button" onClick={()=>keypad("clear")}>Clear</button>
+                </div>
                 {numLocked && (
                   <div style={{marginTop:10, fontSize:13, color:"#d6232a", fontWeight:600}}>
                     You have already answered {numLimit} numerical questions in this subject, which is the limit. Clear one of those answers (Clear Response) to answer this question.
