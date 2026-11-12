@@ -1,3 +1,4 @@
+import {addMistakes, attemptKeyOf, loadMistakes, mistakeKey, useMistakes} from "../lib/mistakes";
 import React, {useEffect, useRef, useState} from "react";
 import {BarRow, Donut} from "../components/Charts";
 import {exportResultsForAI} from "../lib/aiExport";
@@ -73,7 +74,12 @@ export function Confetti({attemptKey}){
   return <canvas ref={ref} aria-hidden="true" style={{position:"fixed", inset:0, width:"100%", height:"100%", pointerEvents:"none", zIndex:70}}/>;
 }
 
-export function ResultsDashboard({state, result, onViewAnalysis, onReviewWrong, onBackHome, onRetake}){
+export function ResultsDashboard({state, result, onViewAnalysis, onReviewWrong, onOpenMistakes, onBackHome, onRetake}){
+  useMistakes();
+  const wrongRows = result.perQuestionResults.filter(r=>r.result==="wrong");
+  const book = loadMistakes();
+  const inBook = wrongRows.filter(r=>book[mistakeKey(state.paperId, r.n)] && book[mistakeKey(state.paperId, r.n)].hits.some(h=>h.a===attemptKeyOf(state))).length;
+  const untagged = wrongRows.filter(r=>{ const it = book[mistakeKey(state.paperId, r.n)]; const h = it && it.hits.find(x=>x.a===attemptKeyOf(state)); return h && !h.cause; }).length;
   return (
     <div className="rs-bg" style={{minHeight:"100vh", padding:"36px 20px"}}>
       <Confetti attemptKey={`${state.paperId}:${state.startedAt}`}/>
@@ -121,6 +127,19 @@ export function ResultsDashboard({state, result, onViewAnalysis, onReviewWrong, 
           })}
         </div>
 
+        {wrongRows.length>0 && (
+          <div className="card" style={{padding:"14px 18px", marginBottom:18, display:"flex", gap:14, alignItems:"center", flexWrap:"wrap", borderLeft:"4px solid var(--marked)"}}>
+            <div style={{flex:"1 1 260px", fontSize:14, lineHeight:1.5}}>
+              {inBook===wrongRows.length
+                ? <><strong>{inBook} wrong answer{inBook===1 ? " is" : "s are"} in your Mistake Book.</strong> {untagged>0 ? `Tag why you missed ${untagged===1 ? "it" : "them"}: knowing the cause is what fixes it.` : "All tagged. You will be quizzed on them again over the coming weeks."}</>
+                : <><strong>{wrongRows.length - inBook} of {wrongRows.length} wrong answers are not in your Mistake Book yet.</strong> Add them to be quizzed on them again after 1, 3, 7, 14, 30 and 60 days.</>}
+            </div>
+            {inBook<wrongRows.length
+              ? <button className="btn btn-primary" onClick={()=>addMistakes(state, wrongRows)}>Add them</button>
+              : <button className="btn btn-primary" onClick={onReviewWrong}>{untagged>0 ? "Tag the causes" : "Review them"}</button>}
+            {onOpenMistakes && <button className="btn" onClick={onOpenMistakes}>Open Mistake Book</button>}
+          </div>
+        )}
         <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(168px, 1fr))", gap:10, marginBottom:30}}>
           <button className="btn btn-primary" style={{width:"100%", padding:"12px 6px", fontSize:13, whiteSpace:"nowrap"}} onClick={onViewAnalysis}>Question-wise Analysis</button>
           <button className="btn" style={{width:"100%", padding:"12px 6px", fontSize:13, whiteSpace:"nowrap"}} onClick={onReviewWrong}>Review Wrong Questions</button>

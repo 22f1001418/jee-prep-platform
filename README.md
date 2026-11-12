@@ -25,6 +25,15 @@ npm run preview  # serve the production build locally
 | `src/screens/`, `src/components/` | UI. |
 | `scripts/copy-mathjax.mjs` | Copies the self-hosted MathJax build into `public/vendor/mathjax` (runs before dev/build; the copy is git-ignored). |
 
+## Mistake Book
+
+Every wrong answer from a finished test is added to the Mistake Book automatically. On the review screen you tag *why* you missed it
+(concept gap, formula, calculation slip, misread, wrong approach, time pressure, guess) and can write a one-line rule for next time.
+Questions come back for revision on a ladder of 1, 3, 7, 14, 30 and 60 days; a wrong answer sends a question back to tomorrow, and passing the
+last step marks it mastered. Revision sessions are graded automatically against the answer key. The Insights tab shows your mix of causes, weakest
+chapters and a test-by-test view. Your cause tags are also included in the "Export for AI analysis" file. The data lives in the browser store
+(`jee_cbt_mistakes_v1`) and is part of Backup / Restore.
+
 ## Where your data lives
 
 History, notes, stars and settings are stored in the browser's IndexedDB. Use **Test History → Backup data** regularly: clearing site data deletes everything.

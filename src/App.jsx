@@ -2,6 +2,7 @@ import React, {useEffect, useRef, useState} from "react";
 import {ExitModal, MAX_EXITS, OverwriteModal, SubmitModal} from "./components/Modals";
 import {getSavedTheme} from "./components/ThemeToggle";
 import {FullscreenLostOverlay, enterExamFullscreen, leaveExamFullscreen} from "./lib/fullscreen";
+import {addMistakes} from "./lib/mistakes";
 import {LS_SELECTED_PAPER, PaperContext, getPaper, getSelectedPaperId, paperMissing} from "./lib/papers";
 import {HISTORY_CAP, clearActive, hasMeaningfulProgress, loadActive, makeInitialExamState, pushHistory, saveActive, setSubmittedStartedAt} from "./lib/persistence";
 import {rescoreHistory, scoreExam} from "./lib/scoring";
@@ -12,6 +13,7 @@ import {ConfigScreen} from "./screens/ConfigScreen";
 import {ExamInterface} from "./screens/ExamInterface";
 import {HistoryScreen} from "./screens/History";
 import {Landing} from "./screens/Landing";
+import {MistakeBook} from "./screens/MistakeBook";
 import {PreviewScreen} from "./screens/PreviewScreen";
 import {ProfileScreen, needsProfile} from "./screens/ProfileScreen";
 import {ResultsDashboard} from "./screens/ResultsDashboard";
@@ -134,6 +136,8 @@ export function App(){
     } else if(hres.evicted>0){
       setTimeout(()=>alert("Test History keeps your latest " + HISTORY_CAP + " attempts. The oldest attempt" + (hres.evicted>1 ? "s (" + hres.evicted + ")" : "") + " and the notes attached to " + (hres.evicted>1 ? "them were" : "it was") + " removed."), 0);
     }
+    // every wrong answer goes into the Mistake Book automatically (untagged); the person tags the cause from the review screen
+    if(hres.saved){ try{ addMistakes(finished, res.perQuestionResults.filter(r=>r.result==="wrong")); }catch(err){ console.error("Mistake Book:", err); } }
     clearActive();
     setResult(res);
     setExamState(finished);
@@ -216,7 +220,7 @@ export function App(){
   if(screen==="landing") return (
     <PaperContext.Provider value={getPaper(selectedPaperId)}>
       <Landing onDemoStart={startDemo} onResume={resumeActive} hasActive={hasActive} onViewHistory={()=>setScreen("history")}
-        onViewAllNotes={()=>setScreen("allnotes")}
+        onViewAllNotes={()=>setScreen("allnotes")} onViewMistakes={()=>setScreen("mistakes")}
         selectedPaperId={selectedPaperId} onChoosePaper={choosePaper}/>
       {overwriteWarning && (
         <OverwriteModal
@@ -229,6 +233,7 @@ export function App(){
   );
   if(screen==="profile") return <ProfileScreen onSave={actuallyStartDemo} onBack={backHome}/>;
   if(screen==="history") return <HistoryScreen onBack={backHome} onOpenTest={openHistoryTest}/>;
+  if(screen==="mistakes") return <MistakeBook onBack={()=>setScreen(examState && result ? "results" : "landing")}/>;
   if(screen==="allnotes") return <AllNotesScreen onBack={backHome} onViewStarredQ={()=>setScreen("starredq")}/>;
   if(screen==="starredq") return <StarredQuestionsScreen onBack={()=>setScreen("allnotes")}/>;
   if(screen==="preview") return (
@@ -270,6 +275,7 @@ export function App(){
       <ResultsDashboard state={examState} result={result}
         onViewAnalysis={()=>setScreen("analysis")}
         onReviewWrong={()=>{setReviewKind("wrong"); setScreen("review");}}
+        onOpenMistakes={()=>setScreen("mistakes")}
         onBackHome={backHome}
         onRetake={retakeSamePaper}/>
       {overwriteWarning && (
