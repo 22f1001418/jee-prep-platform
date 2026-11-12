@@ -1,3 +1,4 @@
+import {Icon} from "../components/icons";
 import React, {useState} from "react";
 import {MARKS_WRONG} from "../lib/constants";
 import {numAttemptLimit, numWrongMarks, usePaper} from "../lib/papers";
@@ -10,7 +11,7 @@ export function ConfigScreen({onBegin, onBack}){
   return (
     <div style={{minHeight:"100vh", padding:"50px 20px", display:"flex", justifyContent:"center"}}>
       <div style={{maxWidth:600, width:"100%"}}>
-        <button className="btn" onClick={onBack} style={{marginBottom:18}}>← Back</button>
+        <button className="btn" onClick={onBack} style={{marginBottom:18}}><Icon name="arrow-left" size={16}/> Back</button>
         <div className="card" style={{padding:"30px 30px 10px"}}>
           <h2 style={{marginTop:0, fontWeight:400, fontFamily:"var(--font-head)"}}>Exam Configuration</h2>
           <div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:"16px 24px", margin:"20px 0 26px"}}>

@@ -1,3 +1,4 @@
+import {Icon} from "../components/icons";
 import React, {useState} from "react";
 import {ChapterAnalysis, DeepAnalysis, ResultPill, TimeAnalysis} from "../components/Analysis";
 import {StrategyLab} from "../components/StrategyLab";
@@ -66,7 +67,7 @@ export function AnalysisPage({state, result, onBack, onReviewWrong, onKeyChanged
   return (
     <div style={{minHeight:"100vh", padding:"28px 20px"}}>
       <div style={{maxWidth:980, margin:"0 auto"}}>
-        <button className="btn" onClick={onBack} style={{marginBottom:16}}>← Back to Results</button>
+        <button className="btn" onClick={onBack} style={{marginBottom:16}}><Icon name="arrow-left" size={16}/> Back to Results</button>
         <h2 style={{marginTop:0}}>JEE Performance Analysis</h2>
 
         <div style={{display:"flex", gap:8, marginBottom:20, flexWrap:"wrap"}}>
@@ -99,8 +100,8 @@ export function AnalysisPage({state, result, onBack, onReviewWrong, onKeyChanged
                 </colgroup>
                 <thead>
                   <tr style={{textAlign:"left", borderBottom:"2px solid var(--border)"}}>
-                    {["\u2605","Q","Subject","Your Answer","Correct","Status","Result","Marks","Time","Question","Note"].map(h=>(
-                      <th key={h} style={{padding: h==="\u2605" ? "10px 0" : "10px 12px", textAlign: h==="\u2605" ? "center" : undefined, color:"var(--text-dim)", fontWeight:700}} title={h==="\u2605" ? "Star a question to revisit it later" : undefined}>{h}</th>
+                    {["STAR","Q","Subject","Your Answer","Correct","Status","Result","Marks","Time","Question","Note"].map(h=>(
+                      <th key={h} style={{padding: h==="STAR" ? "10px 0" : "10px 12px", textAlign: h==="STAR" ? "center" : undefined, color:"var(--text-dim)", fontWeight:700}} title={h==="STAR" ? "Star a question to revisit it later" : undefined}>{h==="STAR" ? <Icon name="star" size={15}/> : h}</th>
                     ))}
                   </tr>
                 </thead>
@@ -112,13 +113,13 @@ export function AnalysisPage({state, result, onBack, onReviewWrong, onKeyChanged
                           <button onClick={()=>setStarList(toggleStarQ(state.paperId, r.n))} aria-pressed={starredSet.has(r.n)}
                             title={starredSet.has(r.n) ? "Remove star from Q"+r.n : "Star Q"+r.n+" to revisit later"}
                             style={{border:"none", background:"transparent", cursor:"pointer", fontSize:20, lineHeight:1, padding:"2px 4px", color: starredSet.has(r.n) ? "#e2a400" : "var(--text-dim)"}}>
-                            {starredSet.has(r.n) ? "\u2605" : "\u2606"}
+                            <Icon name="star" size={17} fill={starredSet.has(r.n)}/>
                           </button>
                         </td>
                         <td style={{padding:"9px 12px", fontWeight:700, whiteSpace:"nowrap"}}>Q{r.n}</td>
                         <td style={{padding:"9px 12px"}}>{r.subject}</td>
                         <td style={{padding:"9px 12px"}} className="mono">{r.yourAnswer ?? "—"}</td>
-                        <td style={{padding:"9px 12px"}} className="mono">{r.correctAnswer}{r.keyEdited && <span title="You corrected this answer key" style={{color:"var(--marked)", marginLeft:4}}>✎</span>}</td>
+                        <td style={{padding:"9px 12px"}} className="mono">{r.correctAnswer}{r.keyEdited && <span title="You corrected this answer key" style={{color:"var(--marked)", marginLeft:4}}><Icon name="pencil" size={13}/></span>}</td>
                         <td style={{padding:"9px 12px", fontSize:12}}>{STATUS_META[r.status].label}</td>
                         <td style={{padding:"9px 12px"}}>
                           <ResultPill result={r.result}/>
@@ -169,7 +170,7 @@ export function AnalysisPage({state, result, onBack, onReviewWrong, onKeyChanged
                     <button onClick={()=>toggleNoteStar(r.n)} aria-pressed={starredNotes.has(`${attemptKey}:${r.n}`)}
                       aria-label={starredNotes.has(`${attemptKey}:${r.n}`) ? "Remove star" : "Star this note"} title={starredNotes.has(`${attemptKey}:${r.n}`) ? "Remove star" : "Star this note"}
                       style={{background:"none", border:"none", padding:"0 0 0 2px", fontSize:18, lineHeight:1, cursor:"pointer", color: starredNotes.has(`${attemptKey}:${r.n}`) ? "#f5c518" : "var(--text-faint)"}}>
-                      {starredNotes.has(`${attemptKey}:${r.n}`) ? "★" : "☆"}
+                      <Icon name="star" size={17} fill={starredNotes.has(`${attemptKey}:${r.n}`)}/>
                     </button>
                   </span>
                   <ResultPill result={r.result}/>
@@ -195,7 +196,7 @@ export function AnalysisPage({state, result, onBack, onReviewWrong, onKeyChanged
         {tab==="strategy" && <StrategyLab state={state} result={result}/>}
 
         <div style={{marginTop:24}}>
-          <button className="btn" onClick={onReviewWrong}>Review Wrong Questions →</button>
+          <button className="btn" onClick={onReviewWrong}>Review Wrong Questions <Icon name="arrow-right" size={16}/></button>
         </div>
       </div>
     </div>

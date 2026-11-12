@@ -1,3 +1,4 @@
+import {Icon} from "../components/icons";
 import React, {useCallback, useEffect, useRef, useState} from "react";
 import {ExplainPanel} from "../components/Explain";
 import {MistakeTagger} from "../components/MistakeTagger";
@@ -89,9 +90,9 @@ function Runner({initial, onFinished, onExit}){
   return (
     <div style={{maxWidth:820, margin:"0 auto", padding:"20px 20px 60px"}}>
       <div style={{display:"flex", alignItems:"center", gap:10, flexWrap:"wrap", marginBottom:8, fontSize:13, color:"var(--text-dim)"}}>
-        <button className="btn" onClick={onExit} style={{padding:"4px 10px", fontSize:12.5}}>← Leave (saved)</button>
+        <button className="btn" onClick={onExit} style={{padding:"4px 10px", fontSize:12.5}}><Icon name="arrow-left" size={16}/> Leave (saved)</button>
         <span>Question {sess.pos + 1} of {sess.keys.length} · {learn ? "Learn" : "Test"} mode</span>
-        {remaining!==null && <span className="mono" style={{marginLeft:"auto", fontWeight:700, fontSize:15, color: remaining<=60 ? "var(--wrong)" : "var(--text)"}}>⏱ {fmtClock(remaining)}</span>}
+        {remaining!==null && <span className="mono" style={{marginLeft:"auto", fontWeight:700, fontSize:15, color: remaining<=60 ? "var(--wrong)" : "var(--text)"}}><Icon name="timer" size={16}/> {fmtClock(remaining)}</span>}
         <button className="btn" style={{marginLeft: remaining!==null ? 0 : "auto", padding:"4px 12px", fontSize:12.5}} onClick={()=>setConfirmFinish(true)}>Finish</button>
       </div>
       <div style={{height:6, background:"var(--border)", borderRadius:3, overflow:"hidden", marginBottom:14}}>
@@ -122,16 +123,16 @@ function Runner({initial, onFinished, onExit}){
         )}
         {learn && checked && (
           <div role="status" style={{marginTop:16, padding:"12px 14px", borderRadius:8, background: ok ? "rgba(46,158,91,.12)" : "rgba(214,67,63,.10)", border:`1px solid ${ok ? "var(--correct)" : "var(--wrong)"}`}}>
-            <div style={{fontWeight:800, color: ok ? "var(--correct)" : "var(--wrong)", marginBottom:4}}>{ok ? "✓ Correct" : "✗ Not quite"}</div>
+            <div style={{fontWeight:800, color: ok ? "var(--correct)" : "var(--wrong)", marginBottom:4, display:"flex", alignItems:"center", gap:6}}>{ok ? <><Icon name="check-circle" size={18}/> Correct</> : <><Icon name="x-circle" size={18}/> Not quite</>}</div>
             <div style={{fontSize:13.5}}>Correct answer: <strong className="mono">{answerText(q)}</strong></div>
-            <div style={{marginTop:12}}><button className="btn btn-primary" onClick={next}>{sess.pos >= sess.keys.length - 1 ? "Finish" : "Next →"}</button> <span style={{fontSize:12, color:"var(--text-faint)", marginLeft:8}}>Enter</span></div>
+            <div style={{marginTop:12}}><button className="btn btn-primary" onClick={next}>{sess.pos >= sess.keys.length - 1 ? "Finish" : <>Next <Icon name="arrow-right" size={16}/></>}</button> <span style={{fontSize:12, color:"var(--text-faint)", marginLeft:8}}>Enter</span></div>
           </div>
         )}
         {!learn && (
           <div style={{marginTop:16, display:"flex", gap:10, flexWrap:"wrap"}}>
-            <button className="btn" disabled={sess.pos===0} onClick={()=>goto(sess.pos - 1)}>← Previous</button>
+            <button className="btn" disabled={sess.pos===0} onClick={()=>goto(sess.pos - 1)}><Icon name="arrow-left" size={16}/> Previous</button>
             <button className="btn" onClick={()=>setResp("")} disabled={String(ans.resp ?? "")===""}>Clear</button>
-            <button className="btn btn-primary" onClick={next}>{sess.pos >= sess.keys.length - 1 ? "Finish" : "Next →"}</button>
+            <button className="btn btn-primary" onClick={next}>{sess.pos >= sess.keys.length - 1 ? "Finish" : <>Next <Icon name="arrow-right" size={16}/></>}</button>
           </div>
         )}
       </div>

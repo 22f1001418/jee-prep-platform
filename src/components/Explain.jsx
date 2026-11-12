@@ -1,3 +1,4 @@
+import {Icon} from "./icons";
 import React, {useEffect, useRef, useState} from "react";
 import {TeX} from "./TeX";
 import {ExplainError, deleteSolution, fetchExplanation, getAccessCode, getSolution, parseSolution, saveSolution, setAccessCode} from "../lib/solutions";
@@ -71,7 +72,7 @@ export function ExplainPanel({paperId, n}){
   return (
     <div style={box}>
       {phase==="idle" && !open && (
-        <button className="btn" onClick={rec ? ()=>setOpen(true) : run}>{rec ? "Show AI solution" : "✦ Explain this (AI)"}</button>
+        <button className="btn" onClick={rec ? ()=>setOpen(true) : run}>{rec ? "Show AI solution" : <><Icon name="sparkles" size={16}/> Explain this (AI)</>}</button>
       )}
       {phase==="error" && (
         <div role="alert" style={{fontSize:13.5, color:"var(--wrong)"}}>{err} <button className="btn" style={{marginLeft:8, padding:"3px 10px", fontSize:12.5}} onClick={run}>Try again</button></div>
@@ -82,7 +83,7 @@ export function ExplainPanel({paperId, n}){
         <div>
           {rec.keyCheck && rec.keyCheck.status==="differs" && (
             <div role="note" style={{padding:"8px 12px", borderRadius:8, background:"rgba(217,164,65,.16)", border:"1px solid var(--gold)", fontSize:13, marginBottom:10, lineHeight:1.5}}>
-              <strong>Heads up:</strong> the AI's careful working gives <strong>{rec.keyCheck.answer || "a different answer"}</strong>, which differs from the answer key. Check the question yourself. If the key is wrong you can correct it under Analysis → Answer Key.
+              <strong>Heads up:</strong> the AI's careful working gives <strong>{rec.keyCheck.answer || "a different answer"}</strong>, which differs from the answer key. Check the question yourself. If the key is wrong you can correct it in the Answer Key tab of the analysis page.
             </div>
           )}
           <Body text={rec.text}/>

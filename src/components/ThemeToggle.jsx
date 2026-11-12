@@ -19,7 +19,7 @@ export function ThemeToggle({inline}){
       style={inline ? {width:"100%", display:"flex", alignItems:"center", justifyContent:"center", gap:8, padding:"8px 12px", fontSize:13}
                     : {position:"absolute", top:16, right:16, padding:"7px 14px", fontSize:13, borderRadius:20}}>
       {inline && <Icon name={theme==="dark" ? "sun" : "moon"} size={16}/>}
-      {theme==="dark" ? (inline ? "Light mode" : "\u2600\uFE0F Light mode") : (inline ? "Dark mode" : "\uD83C\uDF19 Dark mode")}
+      {!inline && <Icon name={theme==="dark" ? "sun" : "moon"} size={15}/>}{theme==="dark" ? "Light mode" : "Dark mode"}
     </button>
   );
 }

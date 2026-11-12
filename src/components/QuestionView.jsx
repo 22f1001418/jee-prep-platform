@@ -1,3 +1,4 @@
+import {Icon} from "./icons";
 import React, {useEffect} from "react";
 import {DiagramSVG} from "./DiagramSVG";
 import {TeX} from "./TeX";
@@ -41,7 +42,7 @@ export function QuestionView({q, resp, onResp, reveal, disabled, autoFocus}){
                 <input type="radio" name="qv-opt" disabled={!!disabled} checked={chosen} onChange={()=>onResp(o.id)}/>
                 <span className="mono" style={{fontWeight:700, minWidth:18}}>{OPTION_LETTERS[i] || o.id}</span>
                 <span style={{minWidth:0, overflowWrap:"anywhere"}}><TeX>{o.text}</TeX></span>
-                {reveal && correct && <span style={{marginLeft:"auto", color:"var(--correct)", fontWeight:700}}>✓</span>}
+                {reveal && correct && <span style={{marginLeft:"auto", color:"var(--correct)", fontWeight:700}}><Icon name="check" size={18}/></span>}
               </label>
             );
           })}

@@ -1,4 +1,5 @@
 import {BackupPanel} from "../components/BackupPanel";
+import {Icon} from "../components/icons";
 import React, {useEffect, useMemo, useState} from "react";
 import {exportChapterReport} from "../lib/chapterReport";
 import {LS_HISTORY, fmtAttemptDate} from "../lib/constants";
@@ -50,7 +51,7 @@ export function ScoreTrend({attemptsOldestFirst}){
         ))}
       </div>
       <div style={{fontSize:12.5, marginTop:6, color: delta>0 ? "var(--correct)" : delta<0 ? "var(--wrong)" : "var(--text-faint)", fontWeight:700}}>
-        {delta>0 ? `▲ +${delta} since first attempt` : delta<0 ? `▼ ${delta} since first attempt` : "No change since first attempt"}
+        {delta>0 ? <><Icon name="trending-up" size={15}/> {`+${delta} since first attempt`}</> : delta<0 ? <><Icon name="trending-down" size={15}/> {`${delta} since first attempt`}</> : "No change since first attempt"}
       </div>
     </div>
   );
@@ -270,12 +271,12 @@ export function HistoryScreen({onBack, onOpenTest}){
     <div style={{minHeight:"100vh", padding:"28px 20px"}}>
       <div style={{maxWidth:760, margin:"0 auto"}}>
         <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16, flexWrap:"wrap", gap:10}}>
-          <button className="btn" onClick={onBack}>← Back</button>
+          <div style={{display:"flex", alignItems:"center", gap:12}}><span className="icon-tile"><Icon name="history" size={22}/></span><h2 style={{margin:0}}>Test History ({history.length})</h2></div>
           <div style={{display:"flex", alignItems:"center", gap:10, flexWrap:"wrap"}}>
           {history.length>0 && (
             <div style={{position:"relative"}}>
               <button className="btn btn-primary" disabled={!!exporting} onClick={()=>setExportOpen(o=>!o)} aria-haspopup="true" aria-expanded={exportOpen}>
-                {exporting ? "Exporting…" : "Export ▾"}
+                {exporting ? "Exporting…" : <>Export <Icon name="chevron-down" size={14}/></>}
               </button>
               {exportOpen && (
                 <React.Fragment>
@@ -300,7 +301,7 @@ export function HistoryScreen({onBack, onOpenTest}){
           {history.length>0 && (
             <div style={{position:"relative"}}>
               <button className="btn" onClick={()=>setFilterOpen(o=>!o)} aria-haspopup="true" aria-expanded={filterOpen} style={{fontFamily:"Arial, Helvetica, sans-serif", fontWeight:400}}>
-                Filter ▾
+                Filter <Icon name="chevron-down" size={14}/>
               </button>
               {filterOpen && (
                 <React.Fragment>
@@ -346,7 +347,7 @@ export function HistoryScreen({onBack, onOpenTest}){
           </div>
         </div>
         <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", gap:10, marginBottom:12, position:"relative"}}>
-          <h2 style={{margin:0}}>Test History ({history.length})</h2>
+          <span/>
           <StorageMeter refreshKey={history.length}/>
           {exportInfo && <ExportDoneModal info={exportInfo} freeBytes={exportInfo.freeBytes||0} onKeep={()=>setExportInfo(null)} onRemove={removeExported}/>}
         </div>

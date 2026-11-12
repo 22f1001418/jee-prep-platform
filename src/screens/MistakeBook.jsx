@@ -1,3 +1,5 @@
+import {Icon} from "../components/icons";
+import {EmptyState, PageHeader, Stat} from "../components/ui";
 import React, {useEffect, useMemo, useState} from "react";
 import {CauseChips, RuleInput} from "../components/MistakeTagger";
 import {BarRow} from "../components/Charts";
@@ -116,7 +118,7 @@ function Session({keys, onDone}){
 
         {fb && (
           <div role="status" style={{marginTop:16, padding:"12px 14px", borderRadius:8, background: fb.ok ? "rgba(46,158,91,.12)" : "rgba(214,67,63,.10)", border:`1px solid ${fb.ok ? "var(--correct)" : "var(--wrong)"}`}}>
-            <div style={{fontWeight:800, color: fb.ok ? "var(--correct)" : "var(--wrong)", marginBottom:4}}>{fb.ok ? "✓ Correct" : "✗ Not quite"}</div>
+            <div style={{fontWeight:800, color: fb.ok ? "var(--correct)" : "var(--wrong)", marginBottom:4, display:"flex", alignItems:"center", gap:6}}>{fb.ok ? <><Icon name="check-circle" size={18}/> Correct</> : <><Icon name="x-circle" size={18}/> Not quite</>}</div>
             <div style={{fontSize:13.5}}>Correct answer: <strong className="mono">{answerText(q)}</strong></div>
             {fb.info && (
               <div style={{fontSize:13, color:"var(--text-dim)", marginTop:4}}>
@@ -134,7 +136,7 @@ function Session({keys, onDone}){
               </div>
             )}
             <ExplainPanel paperId={it.paperId} n={it.n}/>
-            <div style={{marginTop:12}}><button className="btn btn-primary" onClick={next}>{pos + 1 >= queue.length ? "Finish" : "Next →"}</button> <span style={{fontSize:12, color:"var(--text-faint)", marginLeft:8}}>Enter</span></div>
+            <div style={{marginTop:12}}><button className="btn btn-primary" onClick={next}>{pos + 1 >= queue.length ? "Finish" : <>Next <Icon name="arrow-right" size={16}/></>}</button> <span style={{fontSize:12, color:"var(--text-faint)", marginLeft:8}}>Enter</span></div>
           </div>
         )}
       </div>
@@ -149,11 +151,9 @@ function ReviseTab({onStart}){
   const sum = bookSummary();
   const due = dueItems().filter(usable);
   const days = upcomingByDay(7);
+  const TILE_ICON = {"due today":"clock", "coming this week":"calendar", "still learning":"refresh", "mastered":"shield-check"};
   const tile = (label, value, color) => (
-    <div className="card" style={{padding:"14px 16px", textAlign:"center", flex:"1 1 120px"}}>
-      <div style={{fontSize:28, fontWeight:800, color: color || "var(--text)"}}>{value}</div>
-      <div style={{fontSize:12.5, color:"var(--text-dim)"}}>{label}</div>
-    </div>
+    <div style={{flex:"1 1 150px"}}><Stat icon={TILE_ICON[label]} label={label} value={value} tone={color==="var(--correct)" ? "good" : color==="var(--wrong)" ? "bad" : undefined}/></div>
   );
   const dayLabel = i => { const d = new Date(Date.now() + (i + 1) * 86400000); return i===0 ? "Tomorrow" : d.toLocaleDateString(undefined, {weekday:"short"}); };
   const maxDay = Math.max(1, ...days);
@@ -173,13 +173,14 @@ function ReviseTab({onStart}){
             <button className="btn btn-primary" style={{padding:"11px 26px", fontSize:15}} onClick={()=>onStart(due.slice(0, SESSION_CAP).map(i=>i.key))}>Start revision</button>
           </>
         ) : sum.total===0 ? (
-          <div style={{color:"var(--text-dim)", fontSize:14, lineHeight:1.55}}>
-            Your Mistake Book is empty. Every wrong answer from a finished test is added automatically.<br/>
-            Take a test, then open <strong>Review Wrong Questions</strong> and tag why you missed each one.
+          <div style={{color:"var(--text-dim)", fontSize:14, lineHeight:1.6, display:"flex", flexDirection:"column", alignItems:"center", gap:8}}>
+            <span className="icon-tile"><Icon name="mistakes" size={22}/></span>
+            <strong style={{color:"var(--text)", fontSize:16}}>Your Mistake Book is empty</strong>
+            <span style={{maxWidth:420}}>Every wrong answer from a finished test or practice set is added here automatically. Tag why you missed each one and it comes back for revision on a schedule.</span>
           </div>
         ) : (
           <>
-            <div style={{fontSize:15, marginBottom:6}}>Nothing is due. 🎉</div>
+            <div style={{fontSize:16, fontWeight:700, marginBottom:6, display:"flex", alignItems:"center", justifyContent:"center", gap:8}}><Icon name="check-circle" size={20} style={{color:"var(--correct)"}}/> Nothing is due</div>
             <div style={{fontSize:13, color:"var(--text-dim)", marginBottom:12}}>{sum.nextDue ? `Next review: ${fmtShortDate(sum.nextDue)}.` : "Everything here is mastered."}</div>
             {soonest.length>0 && <button className="btn" onClick={()=>onStart(soonest)}>Practise the next {soonest.length} anyway</button>}
           </>
@@ -229,7 +230,7 @@ function MistakeRow({it, onPractise}){
         {cause ? <span style={{fontSize:12, fontWeight:700, padding:"3px 9px", borderRadius:12, background:CAUSE_BY_ID[cause].color, color:"#fff"}}>{CAUSE_BY_ID[cause].short}</span>
                : <span style={{fontSize:12, color:"var(--wrong)", fontWeight:600}}>needs a tag</span>}
         <span style={{fontSize:12.5, fontWeight:600, color: it.status==="mastered" ? "var(--correct)" : (it.due<=Date.now() ? "var(--wrong)" : "var(--text-dim)"), whiteSpace:"nowrap"}}>{dueLabel(it)}</span>
-        <span aria-hidden="true" style={{color:"var(--text-faint)"}}>{open ? "▲" : "▼"}</span>
+        <span aria-hidden="true" style={{color:"var(--text-faint)"}}><Icon name={open ? "chevron-up" : "chevron-down"} size={16}/></span>
       </div>
       {open && (
         <div style={{marginTop:12, paddingTop:12, borderTop:"1px dashed var(--border-dark)"}}>
@@ -241,7 +242,7 @@ function MistakeRow({it, onPractise}){
                 <div style={{display:"grid", gridTemplateColumns:q.options.some(o=>o.text.length>70) ? "1fr" : "1fr 1fr", gap:6, fontSize:13.5, marginBottom:10}}>
                   {q.options.map(o=>(
                     <div key={o.id} style={{color: isOptionCorrect(q, o.id) ? "var(--correct)" : "var(--text-dim)", fontWeight: isOptionCorrect(q, o.id) ? 700 : 400, minWidth:0, overflowWrap:"anywhere"}}>
-                      ({o.id}) <TeX>{o.text}</TeX>{isOptionCorrect(q, o.id) ? " ✓" : ""}
+                      ({o.id}) <TeX>{o.text}</TeX>{isOptionCorrect(q, o.id) ? <span style={{marginLeft:4}}><Icon name="check" size={14}/></span> : null}
                     </div>
                   ))}
                 </div>
@@ -292,7 +293,7 @@ function LogTab({onPractise}){
     return true;
   }).sort((a, b)=>{ const ha = latestHit(a), hb = latestHit(b); return (hb ? hb.at : 0) - (ha ? ha.at : 0) || a.n - b.n; });
   const sel = {padding:"6px 8px", fontSize:13, fontFamily:"inherit", border:"1px solid var(--border-dark)", borderRadius:6, background:"var(--panel)", color:"var(--text)"};
-  if(all.length===0) return <div className="card" style={{padding:30, textAlign:"center", color:"var(--text-dim)"}}>No mistakes logged yet.</div>;
+  if(all.length===0) return <EmptyState icon="mistakes" title="No mistakes logged yet">Wrong answers from tests and practice sets appear here.</EmptyState>;
   return (
     <div>
       <div style={{display:"flex", gap:8, flexWrap:"wrap", marginBottom:12}}>
@@ -323,7 +324,7 @@ function LogTab({onPractise}){
 function InsightsTab({onGoLog}){
   const items = Object.values(loadMistakes());
   const history = useMemo(()=>loadHistory(), []);
-  if(items.length===0) return <div className="card" style={{padding:30, textAlign:"center", color:"var(--text-dim)"}}>Insights appear once you have logged some mistakes.</div>;
+  if(items.length===0) return <EmptyState icon="chart" title="No insights yet">Once you have logged some mistakes, your patterns show up here.</EmptyState>;
   const counts = causeCounts(items);
   const tagged = CAUSES.reduce((s, c)=>s + counts[c.id], 0);
   const totalHits = tagged + counts.untagged;
@@ -417,12 +418,10 @@ export function MistakeBook({onBack, initialTab}){
     if(ok.length) setSession(ok);
   }
   return (
-    <div style={{minHeight:"100vh", padding:"28px 20px"}}>
-      <div style={{maxWidth:820, margin:"0 auto"}}>
-        <div style={{display:"flex", alignItems:"center", gap:12, marginBottom:14}}>
-          <button className="btn" onClick={session ? ()=>setSession(null) : onBack}>← Back</button>
-          <h2 style={{margin:0}}>Mistake Book</h2>
-        </div>
+    <div className="page" style={{maxWidth:860}}>
+      <div>
+        <PageHeader icon="mistakes" title="Mistake Book" subtitle="Every question you missed, why you missed it, and when to revise it next."
+          actions={session ? <button className="btn" onClick={()=>setSession(null)}><Icon name="x" size={16}/> End session</button> : null}/>
         {session ? <Session keys={session} onDone={()=>setSession(null)}/> : (
           <>
             <div role="tablist" style={{display:"flex", gap:6, marginBottom:16, flexWrap:"wrap"}}>

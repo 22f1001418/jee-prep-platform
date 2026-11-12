@@ -1,3 +1,4 @@
+import {Icon} from "./icons";
 import React, {useEffect, useRef, useState} from "react";
 import {DiagramSVG} from "./DiagramSVG";
 import {TeX} from "./TeX";
@@ -31,7 +32,7 @@ export function KeyHelp(){
               <li>Wrong key? Click a question, tick the right answer and press <b>Save &amp; re-score</b>.</li>
               <li>Every saved attempt of this paper is re-scored (+4 / −1 / 0) with your corrected key.</li>
               <li>Tick two options if both should count, or choose <b>full marks to everyone</b> for a dropped question.</li>
-              <li><span style={{color:"var(--marked)"}}>✎</span> marks a question you corrected; <b>Restore original key</b> undoes it. Corrections are saved in this browser.</li>
+              <li><span style={{color:"var(--marked)"}}><Icon name="pencil" size={13}/></span> marks a question you corrected; <b>Restore original key</b> undoes it. Corrections are saved in this browser.</li>
               <li>Box colour: <b style={{color:"var(--correct)"}}>green</b> you were right, <b style={{color:"var(--wrong)"}}>red</b> you were wrong, grey not attempted.</li>
             </ul>
           </span>
@@ -145,7 +146,7 @@ export function AnswerKeyPanel({state, result, onChanged}){
     const after = scoreExam(state).totalScore;
     onChanged();
     setOpenN(null);
-    setMsg(`Q${q.n} key ${q.keyEdited ? "updated" : "restored to the original"}. Marks re-calculated for every saved attempt of this paper. This attempt: ${before} → ${after} / ${result.maxScore}.`);
+    setMsg(`Q${q.n} key ${q.keyEdited ? "updated" : "restored to the original"}. Marks re-calculated for every saved attempt of this paper. This attempt: ${before} became ${after} out of ${result.maxScore}.`);
   }
   function save(q, entry){
     const before = result.totalScore;
@@ -160,7 +161,7 @@ export function AnswerKeyPanel({state, result, onChanged}){
     const before = result.totalScore;
     if(!resetKeyOverrides(paper.id)){ window.alert("Could not save (browser storage is full)."); return; }
     onChanged(); setOpenN(null);
-    setMsg(`Original key restored. This attempt: ${before} → ${scoreExam(state).totalScore} / ${result.maxScore}.`);
+    setMsg(`Original key restored. This attempt: ${before} became ${scoreExam(state).totalScore} out of ${result.maxScore}.`);
   }
   const editor = q => (
     <div ref={openN===q.n ? edRef : null}>
@@ -177,7 +178,7 @@ export function AnswerKeyPanel({state, result, onChanged}){
             <div style={{fontWeight:700, fontSize:15, display:"flex", alignItems:"center", gap:8}}>Answer key: {paper.name}<KeyHelp/></div>
             <div style={{fontSize:13, color:"var(--text-dim)", marginTop:2}}>
               Score for this attempt: <strong className="mono">{result.totalScore} / {result.maxScore}</strong>
-              {" · "}{editedCount===0 ? "no corrections made" : `${editedCount} question${editedCount!==1?"s":""} corrected by you ✎`}
+              {" · "}{editedCount===0 ? "no corrections made" : <>{`${editedCount} question${editedCount!==1?"s":""} corrected by you`} <Icon name="pencil" size={13}/></>}
             </div>
           </div>
           <div style={{display:"flex", gap:8, flexWrap:"wrap"}}>
@@ -210,7 +211,7 @@ export function AnswerKeyPanel({state, result, onChanged}){
                       style={{textAlign:"left", cursor:"pointer", background: openN===q.n ? "color-mix(in srgb, var(--navy) 12%, var(--panel))" : "var(--panel)", color:"var(--text)",
                         border:"1px solid var(--border)", borderLeft:`5px solid ${colorOf(r)}`, borderRadius:6, padding:"7px 10px", minWidth:0}}>
                       <div style={{display:"flex", justifyContent:"space-between", fontSize:11.5, color:"var(--text-faint)"}}>
-                        <span>Q{q.n}</span>{q.keyEdited && <span title="You corrected this key" style={{color:"var(--marked)"}}>✎</span>}
+                        <span>Q{q.n}</span>{q.keyEdited && <span title="You corrected this key" style={{color:"var(--marked)"}}><Icon name="pencil" size={13}/></span>}
                       </div>
                       <div className="mono" style={{fontSize:17, fontWeight:800, lineHeight:1.25, overflowWrap:"anywhere"}}>{keyLabel(q)}</div>
                       {opt && <div style={{fontSize:12, color:"var(--text-dim)", marginTop:2, overflowWrap:"anywhere"}}><TeX>{opt.text}</TeX></div>}
@@ -232,7 +233,7 @@ export function AnswerKeyPanel({state, result, onChanged}){
               <div key={q.n}>
                 <div className="card" style={{padding:"12px 16px", borderLeft:`5px solid ${colorOf(r)}`}}>
                   <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", gap:8, fontSize:12.5, color:"var(--text-faint)", marginBottom:8}}>
-                    <span><strong style={{color:"var(--text)"}}>Q{q.n}</strong> · {q.subject} · {q.chapter}{q.keyEdited && <span style={{color:"var(--marked)", marginLeft:6}}>✎ corrected by you</span>}</span>
+                    <span><strong style={{color:"var(--text)"}}>Q{q.n}</strong> · {q.subject} · {q.chapter}{q.keyEdited && <span style={{color:"var(--marked)", marginLeft:6}}><Icon name="pencil" size={13}/> corrected by you</span>}</span>
                     <button className="btn" style={{padding:"3px 12px", fontSize:12.5}} onClick={()=>setOpenN(openN===q.n ? null : q.n)}>{openN===q.n ? "Close" : "Fix key"}</button>
                   </div>
                   <div style={{marginBottom:8, fontSize:14.5}}><TeX>{q.text}</TeX></div>
@@ -244,7 +245,7 @@ export function AnswerKeyPanel({state, result, onChanged}){
                         const yours = r && r.yourAnswer===o.id && r.result!=="unattempted";
                         return (
                           <div key={o.id} style={{color: ok ? "var(--correct)" : (yours ? "var(--wrong)" : "var(--text-dim)"), fontWeight: ok||yours ? 700 : 400, minWidth:0, overflowWrap:"break-word", display:"flex", alignItems:"center", columnGap:5, flexWrap:"wrap"}}>
-                            <span>({o.id})</span> <span style={{minWidth:0}}><TeX>{o.text}</TeX></span>{ok ? <span>✓</span> : null}{yours && !ok ? <span>(your answer)</span> : null}
+                            <span>({o.id})</span> <span style={{minWidth:0}}><TeX>{o.text}</TeX></span>{ok ? <span><Icon name="check" size={14}/></span> : null}{yours && !ok ? <span>(your answer)</span> : null}
                           </div>
                         );
                       })}

@@ -1,7 +1,9 @@
 import {PercentileCard} from "../components/PercentileCard";
 import {addMistakes, attemptKeyOf, loadMistakes, mistakeKey, useMistakes} from "../lib/mistakes";
+import {Icon} from "../components/icons";
 import React, {useEffect, useRef, useState} from "react";
-import {BarRow, Donut} from "../components/Charts";
+import {BarRow} from "../components/Charts";
+import {Ring, SUBJECT_COLOR, SubjectBadge} from "../components/ui";
 import {exportResultsForAI} from "../lib/aiExport";
 import {SUBJECTS} from "../lib/constants";
 import {getPaper} from "../lib/papers";
@@ -81,73 +83,84 @@ export function ResultsDashboard({state, result, onViewAnalysis, onReviewWrong, 
   const book = loadMistakes();
   const inBook = wrongRows.filter(r=>book[mistakeKey(state.paperId, r.n)] && book[mistakeKey(state.paperId, r.n)].hits.some(h=>h.a===attemptKeyOf(state))).length;
   const untagged = wrongRows.filter(r=>{ const it = book[mistakeKey(state.paperId, r.n)]; const h = it && it.hits.find(x=>x.a===attemptKeyOf(state)); return h && !h.cause; }).length;
+  const max = result.maxScore || 300;
+  const pu = (getPaper(state.paperId) || {}).percentileUrl;
+  const exportTip = "One file for AI: a full analysis brief plus all the data of this exam (score, time, chapters, every question, your notes). Upload it to ChatGPT (or any AI) as it is, and it will analyse your test step by step like a teacher and give you a plan for the next test.";
+  const pctOfMax = Math.round(Math.max(0, result.totalScore) / max * 100);
+  const chip = (icon, label, value, cls) => (
+    <div className="card" style={{padding:"12px 14px", display:"flex", alignItems:"center", gap:11}}>
+      <span className={"chip " + cls} style={{width:34, height:34, padding:0, justifyContent:"center", borderRadius:10}}><Icon name={icon} size={17}/></span>
+      <div><div className="num" style={{fontSize:20, lineHeight:1.1}}>{value}</div><div style={{fontSize:12, color:"var(--text-dim)"}}>{label}</div></div>
+    </div>
+  );
   return (
-    <div className="rs-bg" style={{minHeight:"100vh", padding:"36px 20px"}}>
+    <div className="rs-bg">
       <Confetti attemptKey={`${state.paperId}:${state.startedAt}`}/>
-      <div style={{maxWidth:900, margin:"0 auto"}}>
-        <div style={{marginBottom:22}}>
-          <div style={{fontSize:12.5, color:"var(--text-faint)", fontWeight:700, letterSpacing:"0.06em", marginBottom:4}}>TEST COMPLETE</div>
-          <h1 style={{fontSize:26, fontWeight:800, color:"var(--text)", margin:0}}>{state.testName}</h1>
+      <div className="page stagger" style={{maxWidth:980}}>
+        <div style={{marginBottom:20}}>
+          <span className="chip chip-good" style={{marginBottom:10}}><Icon name="check-circle" size={14}/> Test complete</span>
+          <h1 style={{margin:0, fontSize:28}}>{state.testName}</h1>
         </div>
 
-        <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(300px, 1fr))", gap:16, marginBottom:16}}>
-          <div className="card rs-g rs-g-score" style={{padding:"26px 32px", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", textAlign:"center", minHeight:230}}>
-            <div style={{fontSize:13, fontWeight:700, letterSpacing:"0.08em", color:"var(--text-faint)", marginBottom:6}}>YOUR SCORE</div>
-            <div style={{fontSize:"clamp(76px, 11vw, 112px)", fontWeight:900, lineHeight:1, background:"linear-gradient(90deg,#5aa0ee,#b184f0)", WebkitBackgroundClip:"text", backgroundClip:"text", color:"transparent"}}>{result.totalScore} <span style={{fontSize:"clamp(30px, 4.5vw, 46px)", color:"var(--text-faint)", fontWeight:700}}>/ {result.maxScore}</span></div>
-            {(()=>{ const pu = (getPaper(state.paperId)||{}).percentileUrl; return (typeof pu==="string" && /^https?:\/\//i.test(pu)) ? (
-              <a href={pu} target="_blank" rel="noopener noreferrer" className="rs-pct">
-                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="2" y="8" width="3" height="6" rx="1" fill="currentColor"/><rect x="6.5" y="4" width="3" height="10" rx="1" fill="currentColor"/><rect x="11" y="1.5" width="3" height="12.5" rx="1" fill="currentColor"/></svg>
-                <span>Check percentile for this score</span><span className="rs-pct-arr">↗</span>
-              </a>
-            ) : null; })()}
+        <div className="card" style={{padding:"26px 28px", marginBottom:16, display:"flex", gap:28, alignItems:"center", flexWrap:"wrap",
+          background:"linear-gradient(135deg, color-mix(in srgb, var(--brand) 9%, var(--panel)), var(--panel) 60%)"}}>
+          <Ring value={Math.max(0, result.totalScore)} max={max} size={176} stroke={14} color="url(#scoreGrad)" label={`Score ${result.totalScore} out of ${max}`}>
+            <svg width="0" height="0" style={{position:"absolute"}}><defs><linearGradient id="scoreGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#4d74f2"/><stop offset="1" stopColor="#8a5df0"/></linearGradient></defs></svg>
+            <span className="num" style={{fontSize:46, lineHeight:1}}>{result.totalScore}</span>
+            <span style={{fontSize:13, color:"var(--text-faint)", fontWeight:650}}>out of {max}</span>
+          </Ring>
+          <div style={{flex:"1 1 320px", display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(150px, 1fr))", gap:10}}>
+            {chip("target", "accuracy", `${result.accuracy.toFixed(1)}%`, "chip-soft")}
+            {chip("check-circle", "correct", result.correct, "chip-good")}
+            {chip("x-circle", "incorrect", result.wrong, "chip-bad")}
+            {chip("minus", "unattempted", result.unattempted, "")}
           </div>
-          <div className="card rs-g rs-g-donut" style={{padding:"20px 28px", display:"flex", alignItems:"center", justifyContent:"center", gap:24, flexWrap:"wrap"}}>
-            <Donut correct={result.correct} wrong={result.wrong} unattempted={result.unattempted}/>
-            <div style={{display:"flex", flexDirection:"column", gap:8, fontSize:13}}>
-              <LegendDot color="var(--correct)" label={`Correct: ${result.correct}`}/>
-              <LegendDot color="var(--wrong)" label={`Incorrect: ${result.wrong}`}/>
-              <LegendDot color="var(--unattempted)" label={`Unattempted: ${result.unattempted}`}/>
-              <div style={{marginTop:4, fontWeight:700}}>Accuracy: {result.accuracy.toFixed(2)}%</div>
-            </div>
-          </div>
+          {typeof pu==="string" && /^https?:\/\//i.test(pu) && (
+            <a href={pu} target="_blank" rel="noopener noreferrer" className="btn btn-sm" style={{alignSelf:"flex-start", textDecoration:"none"}}>
+              <Icon name="chart" size={14}/> Marks vs percentile tables <Icon name="arrow-up-right" size={13}/>
+            </a>
+          )}
         </div>
 
-        <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(250px, 1fr))", gap:16, marginBottom:30}}>
+        <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(270px, 1fr))", gap:16, marginBottom:16}}>
           {SUBJECTS.map(s=>{
             const b = result.bySubject[s];
             return (
-              <div key={s} className={"card rs-g rs-g-"+s} style={{padding:"20px 22px"}}>
-                <div style={{fontWeight:700, marginBottom:8}}>{s.toUpperCase()}</div>
-                <div style={{fontSize:13, color:"var(--text-dim)", marginBottom:14}}>
-                  Correct: {b.correct} · Wrong: {b.wrong} · Unattempted: {b.unattempted}
+              <div key={s} className="card card-hover" style={{padding:"18px 20px", borderTop:`3px solid ${SUBJECT_COLOR[s]}`}}>
+                <div style={{display:"flex", alignItems:"center", gap:11, marginBottom:12}}>
+                  <SubjectBadge subject={s} size={38}/>
+                  <div style={{flex:1}}><div style={{fontWeight:800, fontSize:15.5}}>{s}</div><div style={{fontSize:12, color:"var(--text-faint)"}}>{b.correct} right · {b.wrong} wrong · {b.unattempted} blank</div></div>
+                  <div style={{textAlign:"right"}}><div className="num" style={{fontSize:22, lineHeight:1}}>{b.score}</div><div style={{fontSize:11, color:"var(--text-faint)"}}>of {b.max || 100}</div></div>
                 </div>
-                <BarRow label="Score" value={b.score} max={100} color={{Mathematics:"#3f7cc4", Physics:"#e08a2c", Chemistry:"#14532d"}[s]} suffix="/100"/>
+                <BarRow label="Score" value={Math.max(0, b.score)} max={b.max || 100} color={SUBJECT_COLOR[s]} displayValue={`${b.score}/${b.max || 100}`}/>
                 <BarRow label="Accuracy" value={Math.round(b.accuracy)} max={100} color="var(--correct)" suffix="%"/>
               </div>
             );
           })}
         </div>
 
-        <div style={{marginBottom:18}}><PercentileCard paperId={state.paperId} score={result.totalScore}/></div>
+        <div style={{marginBottom:16}}><PercentileCard paperId={state.paperId} score={result.totalScore}/></div>
         {wrongRows.length>0 && (
-          <div className="card" style={{padding:"14px 18px", marginBottom:18, display:"flex", gap:14, alignItems:"center", flexWrap:"wrap", borderLeft:"4px solid var(--marked)"}}>
+          <div className="card" style={{padding:"16px 20px", marginBottom:16, display:"flex", gap:14, alignItems:"center", flexWrap:"wrap", borderLeft:"4px solid var(--marked)"}}>
+            <span className="icon-tile sm"><Icon name="mistakes" size={17}/></span>
             <div style={{flex:"1 1 260px", fontSize:14, lineHeight:1.5}}>
               {inBook===wrongRows.length
                 ? <><strong>{inBook} wrong answer{inBook===1 ? " is" : "s are"} in your Mistake Book.</strong> {untagged>0 ? `Tag why you missed ${untagged===1 ? "it" : "them"}: knowing the cause is what fixes it.` : "All tagged. You will be quizzed on them again over the coming weeks."}</>
                 : <><strong>{wrongRows.length - inBook} of {wrongRows.length} wrong answers are not in your Mistake Book yet.</strong> Add them to be quizzed on them again after 1, 3, 7, 14, 30 and 60 days.</>}
             </div>
             {inBook<wrongRows.length
-              ? <button className="btn btn-primary" onClick={()=>addMistakes(state, wrongRows)}>Add them</button>
-              : <button className="btn btn-primary" onClick={onReviewWrong}>{untagged>0 ? "Tag the causes" : "Review them"}</button>}
+              ? <button className="btn btn-primary" onClick={()=>addMistakes(state, wrongRows)}><Icon name="plus" size={16}/> Add them</button>
+              : <button className="btn btn-primary" onClick={onReviewWrong}>{untagged>0 ? "Tag the causes" : "Review them"} <Icon name="arrow-right" size={16}/></button>}
             {onOpenMistakes && <button className="btn" onClick={onOpenMistakes}>Open Mistake Book</button>}
           </div>
         )}
-        <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(168px, 1fr))", gap:10, marginBottom:30}}>
-          <button className="btn btn-primary" style={{width:"100%", padding:"12px 6px", fontSize:13, whiteSpace:"nowrap"}} onClick={onViewAnalysis}>Question-wise Analysis</button>
-          <button className="btn" style={{width:"100%", padding:"12px 6px", fontSize:13, whiteSpace:"nowrap"}} onClick={onReviewWrong}>Review Wrong Questions</button>
-          {onRetake && <button className="btn btn-save" style={{width:"100%", padding:"12px 6px", fontSize:13, whiteSpace:"nowrap"}} onClick={onRetake}>Retake This Test</button>}
-          <button className="btn tip-btn" data-tip="One file for AI: a full analysis brief plus all the data of this exam (score, time, chapters, every question, your notes). Upload it to ChatGPT (or any AI) as it is, and it will analyse your test step by step like a teacher and give you a plan for the next test." style={{width:"100%", padding:"12px 6px", fontSize:13, whiteSpace:"nowrap"}} onClick={()=>exportResultsForAI(state, result)}>Export Results</button>
-          <button className="btn" style={{width:"100%", padding:"12px 6px", fontSize:13, whiteSpace:"nowrap"}} onClick={onBackHome}>Back to Home</button>
+
+        <div style={{display:"flex", gap:10, flexWrap:"wrap", marginBottom:30}}>
+          <button className="btn btn-primary btn-lg" onClick={onViewAnalysis}><Icon name="chart" size={18}/> Question-wise analysis</button>
+          <button className="btn btn-lg" onClick={onReviewWrong}><Icon name="eye" size={18}/> Review wrong questions</button>
+          {onRetake && <button className="btn btn-lg" onClick={onRetake}><Icon name="refresh" size={18}/> Retake</button>}
+          <button className="btn btn-lg tip-btn" data-tip={exportTip} onClick={()=>exportResultsForAI(state, result)}><Icon name="download" size={18}/> Export for AI</button>
+          <button className="btn btn-lg btn-ghost" onClick={onBackHome}><Icon name="home" size={18}/> Home</button>
         </div>
       </div>
     </div>

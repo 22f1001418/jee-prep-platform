@@ -1,3 +1,4 @@
+import {Icon} from "../components/icons";
 import React, {useState} from "react";
 import {loadHistory} from "../lib/persistence";
 import {alertStorageFull} from "../lib/storageAlerts";
@@ -57,7 +58,7 @@ export function ProfileScreen({onSave, onBack}){
   return (
     <div style={{minHeight:"100vh", padding:"50px 20px", display:"flex", justifyContent:"center"}}>
       <div style={{maxWidth:460, width:"100%"}}>
-        <button className="btn" onClick={onBack} style={{marginBottom:18}}>← Back</button>
+        <button className="btn" onClick={onBack} style={{marginBottom:18}}><Icon name="arrow-left" size={16}/> Back</button>
         <div className="card" style={{padding:"28px 30px"}}>
           <h2 style={{marginTop:0, fontWeight:400, fontFamily:"var(--font-head)"}}>Welcome! Set up your candidate profile</h2>
           <p style={{fontSize:14, color:"var(--text-dim)", marginTop:-4}}>Asked only once. Your name and photo appear on the exam screen, like the real CBT.</p>

@@ -1,3 +1,4 @@
+import {Icon} from "../components/icons";
 import React, {useState} from "react";
 import {DiagramSVG} from "../components/DiagramSVG";
 import {TeX} from "../components/TeX";
@@ -29,12 +30,12 @@ export function StarredQuestionsScreen({onBack}){
   return (
     <div style={{minHeight:"100vh", padding:"28px 20px"}}>
       <div style={{maxWidth:820, margin:"0 auto"}}>
-        <button className="btn" onClick={onBack} style={{marginBottom:16}}>← Back</button>
+        <button className="btn" onClick={onBack} style={{marginBottom:16}}><Icon name="arrow-left" size={16}/> Back</button>
         <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", gap:10, flexWrap:"wrap"}}>
           <h2 style={{margin:"0 0 16px"}}>Starred Questions ({shownCount})</h2>
           <div style={{position:"relative", marginBottom:16}}>
             <button className="btn" onClick={()=>setFilterOpen(o=>!o)} aria-haspopup="true" aria-expanded={filterOpen}>
-              Filter ▾
+              Filter <Icon name="chevron-down" size={14}/>
             </button>
             {filterOpen && (
               <React.Fragment>
@@ -59,7 +60,7 @@ export function StarredQuestionsScreen({onBack}){
           <div style={{display:"flex", alignItems:"center", gap:8, marginBottom:16, flexWrap:"wrap", fontSize:13}}>
             <span style={{color:"var(--text-dim)"}}>Showing:</span>
             <span style={{background:"var(--steel)", color:"#fff", borderRadius:14, padding:"3px 6px 3px 12px", display:"inline-flex", alignItems:"center", gap:6, fontWeight:600}}>
-              {chap.subject}{chap.chapter ? " \u2192 " + chap.chapter : ""}
+              {chap.subject}{chap.chapter ? <> <Icon name="chevron-right" size={13}/> {chap.chapter}</> : null}
               <button onClick={()=>setChap(null)} aria-label="Clear subject and chapter filter" title="Clear this filter"
                 style={{background:"rgba(255,255,255,0.22)", border:"none", color:"#fff", borderRadius:"50%", width:20, height:20, lineHeight:"18px", padding:0, cursor:"pointer", fontSize:13}}>{"\u00D7"}</button>
             </span>
@@ -67,7 +68,7 @@ export function StarredQuestionsScreen({onBack}){
         )}
         {groups.length===0 && (
           <div className="card" style={{padding:30, textAlign:"center", color:"var(--text-dim)"}}>
-            No starred questions yet. While solving a test, tap "☆ Star" next to the question number.
+            No starred questions yet. While solving a test, tap "Star" next to the question number.
           </div>
         )}
         <div style={{display:"flex", flexDirection:"column", gap:22}}>
@@ -85,7 +86,7 @@ export function StarredQuestionsScreen({onBack}){
                         <span><strong style={{color:"var(--text)"}}>Q{q.n}</strong> · {q.subject} · {q.chapter}</span>
                         <button onClick={()=>flip(it)} aria-pressed={on} aria-label={on ? "Remove star" : "Star this question"} title={on ? "Remove star" : "Star this question"}
                           style={{background:"none", border:"none", padding:0, fontSize:20, lineHeight:1, cursor:"pointer", color: on ? "#f5c518" : "var(--text-faint)"}}>
-                          {on ? "★" : "☆"}
+                          <Icon name="star" size={17} fill={on}/>
                         </button>
                       </div>
                       <div style={{marginBottom:10, fontSize:15}}><TeX>{q.text}</TeX></div>

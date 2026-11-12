@@ -1,3 +1,4 @@
+import {Icon} from "../components/icons";
 import React from "react";
 import {DiagramSVG} from "../components/DiagramSVG";
 import {ExplainPanel} from "../components/Explain";
@@ -30,7 +31,7 @@ export function ReviewSection({state, result, kind, onBack}){
     <div style={{minHeight:"100vh", padding:"28px 20px"}}>
       <div style={{maxWidth:820, margin:"0 auto"}}>
         <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", gap:10, flexWrap:"wrap", marginBottom:16}}>
-          <button className="btn" onClick={onBack} style={{fontFamily:"Arial, Helvetica, sans-serif", fontWeight:400}}>← Back</button>
+          <button className="btn" onClick={onBack} style={{fontFamily:"Arial, Helvetica, sans-serif", fontWeight:400}}><Icon name="arrow-left" size={16}/> Back</button>
           {(kind==="wrong" || kind==="unattempted" || kind==="notchosen") && (
             <button className="btn tip-btn tip-below" onClick={()=>exportWrongUnattemptedForAI(state, result)}
               data-tip="A PDF of your wrong and unattempted questions, with their figures. Upload it to ChatGPT (or any AI) and ask it to solve each one and teach you the concept like a teacher."
@@ -68,7 +69,7 @@ export function ReviewSection({state, result, kind, onBack}){
                           color: isCorrect ? "var(--correct)" : (isYours ? "var(--wrong)" : "var(--text-dim)"),
                           fontWeight: isCorrect||isYours ? 700 : 400, minWidth:0, overflowWrap:"break-word", display:"flex", alignItems:"center", columnGap:5, flexWrap:"wrap"
                         }}>
-                          <span>({o.id})</span> <span style={{minWidth:0}}><TeX>{o.text}</TeX></span>{isCorrect?<span>✓ correct</span>:null}{isYours && !isCorrect?<span>✗ your answer</span>:null}
+                          <span>({o.id})</span> <span style={{minWidth:0}}><TeX>{o.text}</TeX></span>{isCorrect?<span><Icon name="check" size={14}/> correct</span>:null}{isYours && !isCorrect?<span><Icon name="x" size={14}/> your answer</span>:null}
                         </div>
                       );
                     })}

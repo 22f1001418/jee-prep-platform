@@ -1,3 +1,4 @@
+import {Icon} from "../components/icons";
 import React, {useEffect, useRef, useState} from "react";
 import {DiagramSVG} from "../components/DiagramSVG";
 import {ScratchPad} from "../components/ScratchPad";
@@ -210,7 +211,7 @@ export function ExamInterface({state, setState, onSubmitRequest, onExitRequest, 
               <span className="cbt-paperpill-text">{state.testName}</span>
               <InfoDot bg="#fff" color="#2f7fc4" size={14}/>
             </div>
-            <span aria-hidden="true" className="cbt-tri">&#9656;</span>
+            <span aria-hidden="true" className="cbt-tri"><Icon name="chevron-right" size={13} stroke={2.4}/></span>
           </div>
 
           <div className="cbt-sectionsrow">
@@ -220,7 +221,7 @@ export function ExamInterface({state, setState, onSubmitRequest, onExitRequest, 
 
           {/* Section tabs: subject × question-type. Each jumps to that section's first question. */}
           <div className="cbt-tabs">
-            <span aria-hidden="true" className="cbt-tabarrow">&#9666;</span>
+            <span aria-hidden="true" className="cbt-tabarrow"><Icon name="chevron-left" size={13} stroke={2.4}/></span>
             {sectionTabs.map(tb=>{
               const active = tb.subject===state.currentSubject && tb.type===curType;
               return (
@@ -242,7 +243,7 @@ export function ExamInterface({state, setState, onSubmitRequest, onExitRequest, 
               <span>Question No. {current}</span>
               <button className={"cbt-star"+(isStarred?" on":"")} onClick={()=>setStarList(toggleStarQ(paper.id, current))}
                 aria-pressed={isStarred} title={isStarred ? "Remove star from this question" : "Star this question to revisit later"}>
-                {isStarred ? "\u2605 Starred" : "\u2606 Star"}
+                <Icon name="star" size={13} fill={isStarred}/> {isStarred ? "Starred" : "Star"}
               </button>
             </span>
             <div style={{display:"inline-flex", alignItems:"center", gap:8, marginLeft:"auto", marginRight:12}}>
@@ -255,13 +256,13 @@ export function ExamInterface({state, setState, onSubmitRequest, onExitRequest, 
                     title={paceHints ? "Time on this question. Click to turn pace hints off." : "Pace hints are off. Click to turn them on."}
                     style={{border:`1px solid ${paceHints && level ? color : "#c9c9c9"}`, background: paceHints && level===2 ? "#fdecea" : paceHints && level===1 ? "#fff6e0" : "#fff", color: paceHints ? color : "#8a97a6",
                       borderRadius:3, padding:"2px 8px", fontSize:11.5, fontWeight:600, cursor:"pointer", fontFamily:"inherit"}}>
-                    {paceHints ? `\u23F1 ${fmtMinSec(secs)} on this question${level===2 ? " \u00B7 consider moving on" : level===1 ? " \u00B7 running long" : ""}` : "\u23F1 pace hints off"}
+                    <Icon name="timer" size={13}/> {paceHints ? `${fmtMinSec(secs)} on this question${level===2 ? " \u00B7 consider moving on" : level===1 ? " \u00B7 running long" : ""}` : "pace hints off"}
                   </button>
                 );
               })()}
               <button type="button" onClick={()=>setScratchOpen(o=>!o)} aria-pressed={scratchOpen} title="Draw or type rough work for this question"
                 style={{border:"1px solid #c9c9c9", background: scratchOpen ? "#0f2a4a" : "#fff", color: scratchOpen ? "#fff" : "#555", borderRadius:3, padding:"2px 8px", fontSize:11.5, fontWeight:600, cursor:"pointer", fontFamily:"inherit"}}>
-                {"\u270E"} Rough work
+                <Icon name="pencil" size={13}/> Rough work
               </button>
             </div>
             <div className="cbt-fontctl" title="Question text size">
@@ -323,7 +324,7 @@ export function ExamInterface({state, setState, onSubmitRequest, onExitRequest, 
             <div className="cbt-actions-left">
               <button onClick={markForReview} className="cbt-btn-white">Mark for Review &amp; Next</button>
               <button onClick={clearResponse} className="cbt-btn-white">Clear Response</button>
-              <button onClick={goPrev} disabled={qIdxInSubject===0} className="cbt-btn-white" style={{opacity: qIdxInSubject===0?0.5:1, cursor: qIdxInSubject===0?"not-allowed":"pointer"}}>&#8592; Previous</button>
+              <button onClick={goPrev} disabled={qIdxInSubject===0} className="cbt-btn-white" style={{opacity: qIdxInSubject===0?0.5:1, cursor: qIdxInSubject===0?"not-allowed":"pointer"}}><Icon name="arrow-left" size={14}/> Previous</button>
             </div>
             <button onClick={saveAndNext} className="cbt-btn-blue">Save &amp; Next</button>
           </div>

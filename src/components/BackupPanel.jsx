@@ -1,3 +1,4 @@
+import {Icon} from "./icons";
 import React, {useRef, useState} from "react";
 import {store} from "../lib/store";
 import {downloadBlob, fileStamp} from "../lib/zip";
@@ -45,8 +46,8 @@ export function BackupPanel(){
   return (
     <div style={{marginTop:10, fontSize:12.5, color:"var(--text-dim)"}}>
       <div style={{display:"flex", gap:8, flexWrap:"wrap", alignItems:"center"}}>
-        <button className="btn" onClick={backup} title="Save all your history, notes, stars and settings to one file">⬇ Backup data</button>
-        <button className="btn" onClick={()=>fileRef.current && fileRef.current.click()} title="Load a backup file made earlier (or from another device)">⬆ Restore backup</button>
+        <button className="btn" onClick={backup} title="Save all your history, notes, stars and settings to one file"><Icon name="download" size={16}/> Backup data</button>
+        <button className="btn" onClick={()=>fileRef.current && fileRef.current.click()} title="Load a backup file made earlier (or from another device)"><Icon name="upload" size={16}/> Restore backup</button>
         <input ref={fileRef} type="file" accept="application/json,.json" onChange={restore} style={{display:"none"}}/>
         <span style={{color:"var(--text-faint)"}}>Stored in this browser ({store.backend==="indexedDB" ? "IndexedDB" : "localStorage"}). Back up before clearing browser data.</span>
       </div>

@@ -1,3 +1,4 @@
+import {Icon} from "../components/icons";
 import React, {useMemo, useState} from "react";
 import {DiagramSVG} from "../components/DiagramSVG";
 import {TeX} from "../components/TeX";
@@ -23,7 +24,7 @@ export function PreviewScreen({onStart, onBack}){
   return (
     <div style={{minHeight:"100vh", padding:"50px 20px", display:"flex", justifyContent:"center"}}>
       <div style={{maxWidth:640, width:"100%"}}>
-        <button className="btn" onClick={onBack} style={{marginBottom:18}}>← Back</button>
+        <button className="btn" onClick={onBack} style={{marginBottom:18}}><Icon name="arrow-left" size={16}/> Back</button>
         <div className="card" style={{padding:"28px 28px 8px"}}>
           <div style={{display:"flex", alignItems:"center", gap:10, marginBottom:4}}>
             <div style={{width:10,height:10,borderRadius:"50%", background:"var(--answered)"}}/>
@@ -43,7 +44,7 @@ export function PreviewScreen({onStart, onBack}){
 
           <div style={{display:"flex", gap:10, marginBottom:28, flexWrap:"wrap"}}>
             <button className="btn" onClick={()=>setShowReview(true)}>Review Questions</button>
-            <button className="btn btn-primary" onClick={onStart}>Continue to Exam Setup →</button>
+            <button className="btn btn-primary" onClick={onStart}>Continue to Exam Setup <Icon name="arrow-right" size={16}/></button>
           </div>
         </div>
       </div>
@@ -67,7 +68,7 @@ export function ReviewQuestions({onBack, onStart}){
   return (
     <div style={{minHeight:"100vh", padding:"30px 20px"}}>
       <div style={{maxWidth:760, margin:"0 auto"}}>
-        <button className="btn" onClick={onBack} style={{marginBottom:16}}>← Back</button>
+        <button className="btn" onClick={onBack} style={{marginBottom:16}}><Icon name="arrow-left" size={16}/> Back</button>
         <h2 style={{marginTop:0}}>Review Extracted Questions</h2>
         <div style={{display:"flex", gap:8, marginBottom:18, flexWrap:"wrap"}}>
           {["All", ...SUBJECTS].map(s=>(
@@ -90,7 +91,7 @@ export function ReviewQuestions({onBack, onStart}){
                 <div style={{display:"grid", gridTemplateColumns:q.options.some(o=>o.text.length>70) ? "1fr" : "1fr 1fr", gap:6, fontSize:14}}>
                   {q.options.map(o=>(
                     <div key={o.id} style={{color: isOptionCorrect(q, o.id) ? "var(--answered)" : "var(--text-dim)", fontWeight:isOptionCorrect(q, o.id)?700:400, minWidth:0, overflowWrap:"break-word", display:"flex", alignItems:"center", columnGap:5, flexWrap:"wrap"}}>
-                      <span>({o.id})</span> <span style={{minWidth:0}}><TeX>{o.text}</TeX></span>{isOptionCorrect(q, o.id) ? <span>✓</span> : null}
+                      <span>({o.id})</span> <span style={{minWidth:0}}><TeX>{o.text}</TeX></span>{isOptionCorrect(q, o.id) ? <span><Icon name="check" size={14}/></span> : null}
                     </div>
                   ))}
                 </div>
@@ -99,7 +100,7 @@ export function ReviewQuestions({onBack, onStart}){
             </div>
           ))}
         </div>
-        <button className="btn btn-primary" onClick={onStart} style={{marginTop:20}}>Continue to Exam Setup →</button>
+        <button className="btn btn-primary" onClick={onStart} style={{marginTop:20}}>Continue to Exam Setup <Icon name="arrow-right" size={16}/></button>
       </div>
     </div>
   );

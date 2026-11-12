@@ -1,3 +1,5 @@
+import {PageHeader} from "../components/ui";
+import {SUBJECT_ICON} from "../components/icons";
 import React, {useMemo, useState} from "react";
 import {SUBJECTS} from "../lib/constants";
 import {fmtShortDate} from "../lib/mistakes";
@@ -17,7 +19,7 @@ const POOLS = [
 function Chip({on, onClick, children, color, title}){
   return (
     <button type="button" aria-pressed={on} title={title} onClick={onClick}
-      style={{cursor:"pointer", fontFamily:"inherit", fontSize:13, fontWeight:600, padding:"5px 12px", borderRadius:16,
+      style={{display:"inline-flex", alignItems:"center", gap:6, cursor:"pointer", fontFamily:"inherit", fontSize:13, fontWeight:600, padding:"5px 12px", borderRadius:16,
         border:`1.5px solid ${color || "var(--border-dark)"}`, background: on ? (color || "var(--navy)") : "transparent", color: on ? "#fff" : "var(--text)"}}>
       {children}
     </button>
@@ -58,9 +60,8 @@ export function PracticeSetup({onStart, onResume, onOpenResults, onOpenMistakes,
   const lastDone = session && session.finished ? session : null;
 
   return (
-    <div style={{maxWidth:820, margin:"0 auto", padding:"24px 20px 60px"}}>
-      <h2 style={{margin:"0 0 4px"}}>Practice</h2>
-      <p style={{margin:"0 0 18px", color:"var(--text-dim)", fontSize:14}}>Build your own set from all {sizes.all.toLocaleString()} questions: one chapter, only numericals, only things you have not tried.</p>
+    <div className="page" style={{maxWidth:860}}>
+      <PageHeader icon="practice" title="Practice" subtitle={`Build your own set from all ${sizes.all.toLocaleString()} questions: one chapter, only numericals, only things you have not tried.`}/>
 
       {unfinished && (
         <div className="card" style={{padding:"14px 18px", marginBottom:16, borderLeft:"4px solid var(--answered)", display:"flex", gap:12, alignItems:"center", flexWrap:"wrap"}}>
@@ -103,7 +104,7 @@ export function PracticeSetup({onStart, onResume, onOpenResults, onOpenMistakes,
       <div className="card" style={{padding:"18px 20px", marginBottom:16}}>
         <div style={sectionTitle}>Subject</div>
         <div style={{display:"flex", gap:8, flexWrap:"wrap", marginBottom:18}}>
-          {SUBJECTS.map(s=><Chip key={s} on={cfg.subjects.includes(s)} color={SUBJECT_COLOR[s]} onClick={()=>toggle("subjects", s)}>{s}</Chip>)}
+          {SUBJECTS.map(s=><Chip key={s} on={cfg.subjects.includes(s)} color={SUBJECT_COLOR[s]} onClick={()=>toggle("subjects", s)}><Icon name={SUBJECT_ICON[s]} size={15}/> {s}</Chip>)}
           {cfg.subjects.length>0 && <button className="btn" style={{padding:"4px 10px", fontSize:12.5}} onClick={()=>upd({subjects:[]})}>Clear</button>}
         </div>
 

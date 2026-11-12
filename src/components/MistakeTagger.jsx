@@ -1,3 +1,4 @@
+import {Icon} from "./icons";
 import React, {useEffect, useState} from "react";
 import {CAUSES, addMistakes, attemptKeyOf, dueLabel, loadMistakes, mistakeKey, setCause, setRule, useMistakes} from "../lib/mistakes";
 
@@ -44,7 +45,7 @@ export function MistakeTagger({state, r}){
   if(!hit){
     return (
       <div style={box}>
-        <button className="btn" onClick={()=>addMistakes(state, [r])}>＋ {it ? "Count this miss too" : "Add to revision queue"}</button>
+        <button className="btn" onClick={()=>addMistakes(state, [r])}><Icon name="plus" size={16}/> {it ? "Count this miss too" : "Add to revision queue"}</button>
         <span style={{marginLeft:10, fontSize:12, color:"var(--text-faint)"}}>
           {it ? `Already in your Mistake Book (${dueLabel(it).toLowerCase()}).` : "You will be quizzed on it again after 1, 3, 7, 14, 30 and 60 days."}
         </span>

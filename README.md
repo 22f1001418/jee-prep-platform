@@ -25,6 +25,13 @@ npm run preview  # serve the production build locally
 | `src/screens/`, `src/components/` | UI. |
 | `scripts/copy-mathjax.mjs` | Copies the self-hosted MathJax build into `public/vendor/mathjax` (runs before dev/build; the copy is git-ignored). |
 
+## Design
+
+One icon set (`src/components/icons.jsx`, about 60 stroke icons incl. subject icons) replaces every emoji and text glyph; the shared building blocks (page header, empty state,
+progress ring, sparkline, subject badge) live in `src/components/ui.jsx` and the tokens and component styles at the end of `src/styles.css`. Light and dark themes share the same tokens,
+motion respects `prefers-reduced-motion`, and the exam screen keeps its own NTA-style look on purpose. **Home** is a "today" screen: a smart next step, a daily goal ring
+(questions answered across tests, practice and revision), a study streak, a daily plan that checks itself off, a score trend, weakest chapters and milestones.
+
 ## Navigation and dashboard
 
 Browsing screens share a navigation shell (side menu on wide screens, bottom tab bar on phones) and live at URL hashes (`#/home`, `#/tests`, `#/practice`,

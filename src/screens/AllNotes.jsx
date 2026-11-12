@@ -1,3 +1,4 @@
+import {Icon} from "../components/icons";
 import React, {useEffect, useMemo, useState} from "react";
 import {QuestionBody} from "../components/NoteEditor";
 import {fmtAttemptDate} from "../lib/constants";
@@ -97,7 +98,7 @@ export function SubjectChapterTree({tree, subjOrder, chap, onChoose, noun}){
   const [openSubj, setOpenSubj] = useState(chap ? chap.subject : null);
   return (
     <React.Fragment>
-      <div style={{fontSize:11.5, fontWeight:700, letterSpacing:.4, color:"var(--text-faint)", textTransform:"uppercase", padding:"6px 10px"}}>Subject &rarr; Chapter</div>
+      <div style={{fontSize:11.5, fontWeight:700, letterSpacing:.4, color:"var(--text-faint)", textTransform:"uppercase", padding:"6px 10px"}}>Subject / Chapter</div>
       <div style={{maxHeight:300, overflowY:"auto"}}>
                     {subjOrder.length===0 && <div style={{padding:"6px 10px", fontSize:13, color:"var(--text-dim)"}}>No {noun}s yet.</div>}
                     {subjOrder.map(sj=>{
@@ -107,7 +108,7 @@ export function SubjectChapterTree({tree, subjOrder, chap, onChoose, noun}){
                           style={{display:"flex", alignItems:"center", gap:8, width:"100%", textAlign:"left", border:"none", background: on ? undefined : "transparent",
                                   padding: indent ? "7px 10px 7px 12px" : "9px 10px", fontWeight:400, fontSize: indent ? 13 : undefined}}>
                           <span style={{flex:1, minWidth:0, overflowWrap:"anywhere"}}>{label}</span>
-                          {on && <span style={{color:"var(--steel)", fontWeight:700}}>{"\u2713"}</span>}
+                          {on && <span style={{color:"var(--brand)"}}><Icon name="check" size={14}/></span>}
                           <span style={{fontSize:11.5, color:"var(--text-dim)", background:"var(--bg)", border:"1px solid var(--border)", borderRadius:10, padding:"0 7px", lineHeight:"18px", minWidth:22, textAlign:"center"}}>{count}</span>
                         </button>
                       );
@@ -115,7 +116,7 @@ export function SubjectChapterTree({tree, subjOrder, chap, onChoose, noun}){
                         <div key={sj}>
                           <button className="btn" onClick={()=>setOpenSubj(open ? null : sj)} aria-expanded={open}
                             style={{display:"flex", alignItems:"center", gap:8, width:"100%", textAlign:"left", border:"none", background:"transparent", padding:"9px 10px", fontWeight:500}}>
-                            <span style={{display:"inline-block", width:12, fontSize:11, color:"var(--text-dim)", transform: open ? "rotate(90deg)" : "none", transition:"transform .12s"}}>{"\u25B6"}</span>
+                            <span style={{display:"inline-flex", color:"var(--text-dim)", transform: open ? "rotate(90deg)" : "none", transition:"transform .15s"}}><Icon name="chevron-right" size={14}/></span>
                             <span style={{flex:1, color: subjHas ? "var(--steel)" : undefined, fontWeight: subjHas ? 700 : 500}}>{sj}</span>
                             <span style={{fontSize:11.5, color:"var(--text-dim)"}}>{tree[sj].n} {noun}{tree[sj].n!==1?"s":""}</span>
                           </button>
@@ -186,15 +187,14 @@ export function AllNotesScreen({onBack, onViewStarredQ}){
   return (
     <div style={{minHeight:"100vh", padding:"28px 20px"}}>
       <div style={{maxWidth:820, margin:"0 auto"}}>
-        <button className="btn" onClick={onBack} style={{marginBottom:16}}>← Back</button>
         <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", gap:10, flexWrap:"wrap"}}>
-          <h2 style={{margin:"0 0 16px"}}>All Notes ({shownCount})</h2>
+          <div style={{display:"flex", alignItems:"center", gap:12, margin:"0 0 16px"}}><span className="icon-tile"><Icon name="notes" size={22}/></span><h2 style={{margin:0}}>All Notes ({shownCount})</h2></div>
           <div style={{position:"relative", marginBottom:16, display:"flex", gap:10, alignItems:"center", flexWrap:"wrap"}}>
             <button className="btn" onClick={onViewStarredQ} style={{fontFamily:"Arial, Helvetica, sans-serif", fontWeight:400}}>
-              ★ Starred Questions
+              <Icon name="star" size={15}/> Starred Questions
             </button>
             <button className="btn" onClick={()=>setFilterOpen(o=>!o)} aria-haspopup="true" aria-expanded={filterOpen} style={{fontFamily:"Arial, Helvetica, sans-serif", fontWeight:400}}>
-              Filter ▾
+              Filter <Icon name="chevron-down" size={14}/>
             </button>
             {filterOpen && (
               <React.Fragment>
@@ -207,7 +207,7 @@ export function AllNotesScreen({onBack, onViewStarredQ}){
                   </button>
                   <button className={"btn"+(starredOnly ? " hist-sel" : "")} onClick={()=>{ setStarredOnly(true); setFilterOpen(false); }}
                     style={{display:"block", width:"100%", textAlign:"left", border:"none", background: starredOnly ? undefined : "transparent", padding:"10px", marginTop:2, fontWeight:400}}>
-                    ★ Starred notes only{starredShownCount>0 ? ` (${starredShownCount})` : ""}
+                    <Icon name="star" size={14} fill/> Starred notes only{starredShownCount>0 ? ` (${starredShownCount})` : ""}
                   </button>
                   <div style={{borderTop:"1px solid var(--border)", margin:"8px 0 6px"}}/>
                   <SubjectChapterTree tree={tree} subjOrder={subjOrder} chap={chap} onChoose={c=>{ setChap(c); setFilterOpen(false); }}/>
@@ -229,7 +229,7 @@ export function AllNotesScreen({onBack, onViewStarredQ}){
           <div style={{display:"flex", alignItems:"center", gap:8, marginBottom:16, flexWrap:"wrap", fontSize:13}}>
             <span style={{color:"var(--text-dim)"}}>Showing:</span>
             <span style={{background:"var(--steel)", color:"#fff", borderRadius:14, padding:"3px 6px 3px 12px", display:"inline-flex", alignItems:"center", gap:6, fontWeight:600}}>
-              {chap.subject}{chap.chapter ? " \u2192 " + chap.chapter : ""}
+              {chap.subject}{chap.chapter ? <> <Icon name="chevron-right" size={13}/> {chap.chapter}</> : null}
               <button onClick={()=>setChap(null)} aria-label="Clear subject and chapter filter" title="Clear this filter"
                 style={{background:"rgba(255,255,255,0.22)", border:"none", color:"#fff", borderRadius:"50%", width:20, height:20, lineHeight:"18px", padding:0, cursor:"pointer", fontSize:13}}>{"\u00D7"}</button>
             </span>
@@ -237,7 +237,7 @@ export function AllNotesScreen({onBack, onViewStarredQ}){
         )}
         {totalNotes>0 && filtering && shownGroups.length===0 && (
           <div className="card" style={{padding:30, textAlign:"center", color:"var(--text-dim)"}}>
-            {starredOnly && !chap ? "No starred notes yet. Tap the \u2606 on any note to star it." : "No notes match this filter."}
+            {starredOnly && !chap ? "No starred notes yet. Tap the star on any note to star it." : "No notes match this filter."}
           </div>
         )}
         {totalNotes===0 && (
@@ -280,7 +280,7 @@ export function AllNotesScreen({onBack, onViewStarredQ}){
                               <button onClick={()=>toggleStar(entryKey)} aria-pressed={starred.has(entryKey)}
                                 aria-label={starred.has(entryKey) ? "Remove star" : "Star this note"} title={starred.has(entryKey) ? "Remove star" : "Star this note"}
                                 style={{background:"none", border:"none", padding:"0 0 0 2px", fontSize:18, lineHeight:1, color: starred.has(entryKey) ? "#f5c518" : "var(--text-faint)"}}>
-                                {starred.has(entryKey) ? "★" : "☆"}
+                                <Icon name="star" size={17} fill={starred.has(entryKey)}/>
                               </button>
                             </span>
                             </div>
