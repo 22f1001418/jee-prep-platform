@@ -12,19 +12,28 @@ import {AnalysisPage} from "./screens/AnalysisPage";
 import {ConfigScreen} from "./screens/ConfigScreen";
 import {ExamInterface} from "./screens/ExamInterface";
 import {HistoryScreen} from "./screens/History";
-import {Landing} from "./screens/Landing";
+import {AppShell} from "./components/AppShell";
 import {PracticeSession} from "./screens/PracticeSession";
 import {PracticeSetup} from "./screens/PracticeSetup";
-import {saveSession} from "./lib/practice";
+import {chapterKey, saveSession} from "./lib/practice";
+import {Home} from "./screens/Home";
 import {MistakeBook} from "./screens/MistakeBook";
 import {PreviewScreen} from "./screens/PreviewScreen";
 import {ProfileScreen, needsProfile} from "./screens/ProfileScreen";
 import {ResultsDashboard} from "./screens/ResultsDashboard";
 import {ReviewSection} from "./screens/ReviewSection";
 import {StarredQuestionsScreen} from "./screens/StarredQuestions";
+import {Tests} from "./screens/Tests";
+
+// Browsing screens live at a URL hash (#/home, #/tests ...) so the browser Back button and reloads behave; the exam flow is state only.
+const ROUTE_OF = {home:"home", tests:"tests", practice:"practice", mistakes:"mistakes", history:"history", allnotes:"notes", starredq:"starred"};
+const SCREEN_OF = Object.fromEntries(Object.entries(ROUTE_OF).map(([s, r])=>[r, s]));
+const screenFromHash = ()=>SCREEN_OF[(window.location.hash || "").replace(/^#\/?/, "")] || null;
 
 export function App(){
-  const [screen, setScreen] = useState("landing"); // landing|preview|config|exam|submitmodal|results|analysis|review|history
+  const [screen, setScreen] = useState(()=>screenFromHash() || "home"); // home|tests|practice|mistakes|history|allnotes|starredq|preview|config|exam|submitmodal|results|analysis|review|...
+  const [practiceInitial, setPracticeInitial] = useState(null);
+  const screenRef = useRef(screen); screenRef.current = screen;
   const [examState, setExamState] = useState(null);
   const [result, setResult] = useState(null);
   const [reviewKind, setReviewKind] = useState("wrong");
@@ -33,6 +42,16 @@ export function App(){
   const [selectedPaperId, setSelectedPaperIdState] = useState(getSelectedPaperId());
   const examStateRef = useRef(null); examStateRef.current = examState;   // always the latest exam state (for submission)
   const submittedKeyRef = useRef(null);                                  // startedAt of the attempt already submitted
+
+  useEffect(()=>{
+    const r = ROUTE_OF[screen];
+    if(r && screenFromHash()!==screen) window.location.hash = "/" + r;
+  }, [screen]);
+  useEffect(()=>{
+    const onHash = ()=>{ const s = screenFromHash(); if(s && ROUTE_OF[screenRef.current] && s!==screenRef.current) setScreen(s); };
+    window.addEventListener("hashchange", onHash);
+    return ()=>window.removeEventListener("hashchange", onHash);
+  }, []);
 
   // Exam window (and its modals) always stays light; other screens follow the saved theme.
   useEffect(()=>{
@@ -78,14 +97,26 @@ export function App(){
     }
     actuallyStartDemo();
   }
-  function actuallyStartDemo(){
+  // Start a specific paper from the Mock Tests list (or the home dashboard).
+  function startPaper(id){
+    choosePaper(id);
+    if(hasActive){ setOverwriteWarning(true); return; }
+    actuallyStartDemo(id);
+  }
+  function navigate(id){ setPracticeInitial(null); setScreen(id); }
+  function practiceChapter(subject, chapter){
+    setPracticeInitial({pool:"all", subjects:[subject], chapters:[chapterKey(subject, chapter)], type:"all", years:[]});
+    setScreen("practice");
+  }
+  function actuallyStartDemo(idArg){
+    const startId = typeof idArg==="string" ? idArg : selectedPaperId;
     if(needsProfile()){
       // very first test: ask for the candidate's name (and optional photo) once
       setOverwriteWarning(false);
       setScreen("profile");
       return;
     }
-    const fresh = makeInitialExamState(getPaper(selectedPaperId));
+    const fresh = makeInitialExamState(getPaper(startId));
     setExamState(fresh);
     saveActive(fresh);
     setOverwriteWarning(false);
@@ -101,7 +132,7 @@ export function App(){
       if(saved.paperId) choosePaper(saved.paperId);
       setExamState(saved);
       if(saved.phase==="exam") enterExamFullscreen();
-      setScreen(saved.phase==="exam" ? "exam" : "landing");
+      setScreen(saved.phase==="exam" ? "exam" : "home");
     }
   }
   function beginExam(){
@@ -161,7 +192,7 @@ export function App(){
     if(examState && examState.perQ) setResult(scoreExam(examState));
   }
   function backHome(){
-    setScreen("landing");
+    setScreen("home");
     setExamState(null);
     setResult(null);
     setHistorySource(null);
@@ -209,7 +240,7 @@ export function App(){
     // progress is already persisted to store on every tick/update;
     // just record this exit and leave the exam screen.
     saveActive({...examState, exitCount: used + 1});
-    setScreen("landing");
+    setScreen("home");
     setExamState(null);
     setResult(null);
   }
@@ -220,11 +251,10 @@ export function App(){
   // Falls back to the landing selection only when there's no exam yet.
   const examPaper = getPaper((examState && examState.paperId) || selectedPaperId);
 
-  if(screen==="landing") return (
+  // Browsing screens share the navigation shell; focused flows (exam, results, practice run ...) do not.
+  const shellWrap = content => (
     <PaperContext.Provider value={getPaper(selectedPaperId)}>
-      <Landing onDemoStart={startDemo} onResume={resumeActive} hasActive={hasActive} onViewHistory={()=>setScreen("history")}
-        onViewAllNotes={()=>setScreen("allnotes")} onViewMistakes={()=>setScreen("mistakes")} onViewPractice={()=>setScreen("practice")}
-        selectedPaperId={selectedPaperId} onChoosePaper={choosePaper}/>
+      <AppShell screen={screen} onNavigate={navigate}>{content}</AppShell>
       {overwriteWarning && (
         <OverwriteModal
           onCancel={()=>setOverwriteWarning(false)}
@@ -234,13 +264,21 @@ export function App(){
       )}
     </PaperContext.Provider>
   );
+  if(screen==="home") return shellWrap(
+    <Home hasActive={hasActive} onNavigate={navigate} onResumeTest={resumeActive} onStartPaper={startPaper}
+      onPracticeChapter={practiceChapter} onResumePractice={()=>setScreen("practicerun")}/>
+  );
+  if(screen==="tests") return shellWrap(<Tests onStartPaper={startPaper} onResume={resumeActive} hasActive={hasActive}/>);
   if(screen==="profile") return <ProfileScreen onSave={actuallyStartDemo} onBack={backHome}/>;
-  if(screen==="history") return <HistoryScreen onBack={backHome} onOpenTest={openHistoryTest}/>;
-  if(screen==="practice") return <PracticeSetup onBack={backHome} onStart={s=>{ saveSession(s); setScreen("practicerun"); }} onResume={()=>setScreen("practicerun")} onOpenResults={()=>setScreen("practicerun")} onOpenMistakes={()=>setScreen("mistakes")}/>;
+  if(screen==="history") return shellWrap(<HistoryScreen onBack={backHome} onOpenTest={openHistoryTest}/>);
+  if(screen==="practice") return shellWrap(
+    <PracticeSetup key={JSON.stringify(practiceInitial)} initial={practiceInitial} onBack={backHome} onStart={s=>{ saveSession(s); setScreen("practicerun"); }}
+      onResume={()=>setScreen("practicerun")} onOpenResults={()=>setScreen("practicerun")} onOpenMistakes={()=>setScreen("mistakes")}/>
+  );
   if(screen==="practicerun") return <PracticeSession onExit={()=>setScreen("practice")} onSetup={()=>setScreen("practice")} onOpenMistakes={()=>setScreen("mistakes")}/>;
-  if(screen==="mistakes") return <MistakeBook onBack={()=>setScreen(examState && result ? "results" : "landing")}/>;
-  if(screen==="allnotes") return <AllNotesScreen onBack={backHome} onViewStarredQ={()=>setScreen("starredq")}/>;
-  if(screen==="starredq") return <StarredQuestionsScreen onBack={()=>setScreen("allnotes")}/>;
+  if(screen==="mistakes") return shellWrap(<MistakeBook onBack={()=>setScreen(examState && result ? "results" : "home")}/>);
+  if(screen==="allnotes") return shellWrap(<AllNotesScreen onBack={backHome} onViewStarredQ={()=>setScreen("starredq")}/>);
+  if(screen==="starredq") return shellWrap(<StarredQuestionsScreen onBack={()=>setScreen("allnotes")}/>);
   if(screen==="preview") return (
     <PaperContext.Provider value={examPaper}>
       <PreviewScreen onStart={()=>setScreen("config")} onBack={backHome}/>

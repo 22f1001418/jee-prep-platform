@@ -182,7 +182,7 @@ export function PracticeSetup({onStart, onResume, onOpenResults, onOpenMistakes,
         </div>
       </div>
 
-      <div className="card" style={{padding:"16px 20px", display:"flex", gap:14, alignItems:"center", flexWrap:"wrap", position:"sticky", bottom:12, boxShadow:"0 4px 18px rgba(0,0,0,.12)"}}>
+      <div className="card sticky-action" style={{padding:"16px 20px", display:"flex", gap:14, alignItems:"center", flexWrap:"wrap", boxShadow:"0 4px 18px rgba(0,0,0,.12)"}}>
         <div style={{flex:"1 1 220px", fontSize:14}}>
           {pool.length===0
             ? <span style={{color:"var(--wrong)", fontWeight:600}}>No questions match these filters.</span>

@@ -25,6 +25,13 @@ npm run preview  # serve the production build locally
 | `src/screens/`, `src/components/` | UI. |
 | `scripts/copy-mathjax.mjs` | Copies the self-hosted MathJax build into `public/vendor/mathjax` (runs before dev/build; the copy is git-ignored). |
 
+## Navigation and dashboard
+
+Browsing screens share a navigation shell (side menu on wide screens, bottom tab bar on phones) and live at URL hashes (`#/home`, `#/tests`, `#/practice`,
+`#/mistakes`, `#/history`, `#/notes`), so the browser Back button and reloads work. The exam, results and practice run are full-screen flows without the menu.
+**Home** shows what to do next (revision due, resume a test or practice, the next unattempted paper), your study streak, recent scores and your weakest chapters
+with a one-click "Practise". **Mock Tests** lists every paper with your best score and attempts.
+
 ## Mistake Book
 
 Every wrong answer from a finished test is added to the Mistake Book automatically. On the review screen you tag *why* you missed it
