@@ -4,7 +4,6 @@ import React, {useEffect, useMemo, useState} from "react";
 import {CauseChips, RuleInput} from "../components/MistakeTagger";
 import {BarRow} from "../components/Charts";
 import {DiagramSVG} from "../components/DiagramSVG";
-import {ExplainPanel} from "../components/Explain";
 import {QuestionView} from "../components/QuestionView";
 import {TeX} from "../components/TeX";
 import {SUBJECTS} from "../lib/constants";
@@ -134,7 +133,6 @@ function Session({keys, onDone}){
                 {it.rule && <span>Your rule: <em>{it.rule}</em></span>}
               </div>
             )}
-            <ExplainPanel paperId={it.paperId} n={it.n}/>
             <div style={{marginTop:12}}><button className="btn btn-primary" onClick={next}>{pos + 1 >= queue.length ? "Finish" : <>Next <Icon name="arrow-right" size={16}/></>}</button> <span style={{fontSize:12, color:"var(--text-faint)", marginLeft:8}}>Enter</span></div>
           </div>
         )}
@@ -249,7 +247,6 @@ function MistakeRow({it, onPractise}){
               <div style={{fontSize:13.5, marginBottom:12}}>Correct answer: <strong className="mono" style={{color:"var(--correct)"}}>{answerText(q)}</strong></div>
             </>
           ) : <div style={{fontSize:13, color:"var(--text-dim)", marginBottom:10}}>This question's paper is not available in this version.</div>}
-          {q && <ExplainPanel paperId={it.paperId} n={it.n}/>}
           <div style={{fontSize:12.5, fontWeight:700, color:"var(--text-dim)", margin:"12px 0 6px"}}>Why did you miss it?</div>
           <CauseChips value={cause} onChange={c=>setCause(it.key, hit && hit.a, c)}/>
           <div style={{marginTop:8}}><RuleInput value={it.rule} onSave={t=>setRule(it.key, t)}/></div>

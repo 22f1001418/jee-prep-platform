@@ -66,30 +66,6 @@ a pool (all questions, not attempted yet, your Mistake Book, or starred). Choose
 straight away) or **Test** mode (results at the end, with a question palette), with an optional timer. Sessions are saved, so you can leave and resume.
 Wrong answers go into the Mistake Book; the results screen lets you tag the causes.
 
-## AI solutions ("Explain this")
-
-Every question on the review, practice-results and Mistake Book screens has an **Explain this (AI)** button. It asks Claude for a short, step-by-step solution
-(idea, numbered steps, answer, why the other options fail, the common trap), streams it into the page with the maths typeset, and saves it on your device so each question is only paid for once.
-The model is also told to solve independently and flag when its working disagrees with the answer key; the app then shows a "Heads up" note (past-paper keys are not always right).
-Explanations are AI-generated and can be wrong.
-
-How it works: the browser calls this app's own serverless function `api/explain.js`, which holds the API key. The function looks the question up in the bank itself
-(so it can only be used for questions in this app, never for arbitrary prompts), sends the question text, the official key and any figures to Claude, and streams the answer back.
-
-**Setup (Vercel).** In *Settings > Environment Variables* add:
-
-| Name | Required | What |
-|---|---|---|
-| `ANTHROPIC_API_KEY` | yes | Your Anthropic API key. Stays on the server. |
-| `APP_ACCESS_CODE` | yes | A passcode you choose. The app asks for it once per browser; without it strangers could spend your API credit. |
-| `EXPLAIN_MODEL` | no | Default `claude-opus-5-5`. Use e.g. `claude-sonnet-5-5` for a lower cost per explanation. |
-| `EXPLAIN_EFFORT` | no | `low` / `medium` / `high` (default) / `xhigh` / `max`. Lower is cheaper and faster, higher is more careful. |
-| `EXPLAIN_FALLBACKS` | no | Set to `off` to stop sending the server-side refusal-fallback parameter. |
-| `EXPLAIN_RATE_PER_HOUR` | no | Requests per visitor per hour (default 60, best effort per server instance). |
-
-Without the first two the button explains that the feature is not set up. **Local development:** copy `.env.example` to `.env.local` and fill it in; `npm run dev` serves `/api/explain` too.
-The access code is kept in this browser's localStorage only (never in backups); saved explanations are part of Backup / Restore.
-
 ## Where your data lives
 
 History, notes, stars and settings are stored in the browser's IndexedDB. Use **Test History → Backup data** regularly: clearing site data deletes everything.

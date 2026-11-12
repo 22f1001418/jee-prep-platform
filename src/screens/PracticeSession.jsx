@@ -1,6 +1,5 @@
 import {Icon} from "../components/icons";
 import React, {useCallback, useEffect, useRef, useState} from "react";
-import {ExplainPanel} from "../components/Explain";
 import {MistakeTagger} from "../components/MistakeTagger";
 import {QuestionView} from "../components/QuestionView";
 import {BarRow} from "../components/Charts";
@@ -219,7 +218,6 @@ function Results({session, onAgain, onSetup, onOpenMistakes}){
                 <span>Your answer: <strong className="mono">{r.resp ?? "—"}</strong></span>
                 <span>Correct answer: <strong className="mono" style={{color:"var(--correct)"}}>{answerText(info.q)}</strong></span>
               </div>
-              <ExplainPanel paperId={r.paperId} n={r.n}/>
               {(r.result==="wrong" || r.result==="unattempted") && <MistakeTagger state={pseudo} r={r}/>}
             </div>
           );

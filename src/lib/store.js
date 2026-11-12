@@ -12,8 +12,8 @@ const DB_VERSION = 1;
 const OS = "kv";
 const MIGRATED_FLAG = "__migrated_from_localstorage_v1";
 const KEY_PREFIX = "jee_cbt_";
-// Kept in localStorage only: the theme (read before first paint, see index.html) and the explain access code (a credential: never in IndexedDB or backups)
-const LOCAL_ONLY = new Set(["jee_cbt_theme_v1", "jee_cbt_access_code_v1"]);
+// Kept in localStorage only: the theme (read before first paint, see index.html)
+const LOCAL_ONLY = new Set(["jee_cbt_theme_v1"]);
 
 const mem = new Map();
 const dirty = new Map();            // key -> string | null (null = delete), waiting to be flushed
@@ -147,6 +147,7 @@ export async function initStore() {
     useLocalStorage = true; db = null;
     try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k && k.startsWith(KEY_PREFIX)) mem.set(k, localStorage.getItem(k)); } } catch (e2) { /* ignore */ }
   }
+  try { localStorage.removeItem("jee_cbt_access_code_v1"); } catch (e) { /* old AI-explain passcode: no longer used, do not leave a credential behind */ }
   try {
     channel = new BroadcastChannel("jee-cbt-store");
     channel.onmessage = ev => {

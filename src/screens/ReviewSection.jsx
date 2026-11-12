@@ -1,7 +1,6 @@
 import {Icon} from "../components/icons";
 import React from "react";
 import {DiagramSVG} from "../components/DiagramSVG";
-import {ExplainPanel} from "../components/Explain";
 import {MistakeTagger} from "../components/MistakeTagger";
 import {TeX} from "../components/TeX";
 import {exportWrongUnattemptedForAI} from "../lib/aiExport";
@@ -80,7 +79,6 @@ export function ReviewSection({state, result, kind, onBack}){
                   <span>Correct answer: <strong className="mono" style={{color:"var(--correct)"}}>{r.correctAnswer}</strong></span>
                   <span>Marks: <strong className="mono">{r.result==="notchosen" ? "not scored" : (r.marks>0?`+${r.marks}`:r.marks)}</strong></span>
                 </div>
-                <ExplainPanel paperId={state.paperId} n={r.n}/>
                 {taggable && (r.result==="wrong" || r.result==="unattempted") && <MistakeTagger state={state} r={r}/>}
               </div>
             );
