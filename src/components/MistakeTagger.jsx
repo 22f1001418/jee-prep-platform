@@ -37,7 +37,7 @@ export function RuleInput({value, onSave, placeholder}){
 // Shown under each wrong / unattempted question on the review screen.
 export function MistakeTagger({state, r}){
   useMistakes();
-  const key = mistakeKey(state.paperId, r.n), ak = attemptKeyOf(state);
+  const key = mistakeKey(r.paperId || state.paperId, r.n), ak = attemptKeyOf(state);
   const it = loadMistakes()[key];
   const hit = it ? it.hits.find(h=>h.a===ak) : null;
   const box = {marginTop:12, paddingTop:10, borderTop:"1px dashed var(--border-dark)"};

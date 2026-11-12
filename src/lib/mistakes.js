@@ -60,7 +60,8 @@ function save(all){
 
 // ---------- keys and dates ----------
 export function mistakeKey(paperId, n){ return `${paperId}:${n}`; }
-export function attemptKeyOf(state){ return `${state.paperId}:${state.startedAt}`; }
+// A test attempt is "paperId:startedAt". A practice session carries its own key ("practice:<id>"), because its questions come from many papers.
+export function attemptKeyOf(state){ return state.attemptKey || `${state.paperId}:${state.startedAt}`; }
 export function startOfDay(ts){ const d = new Date(ts); d.setHours(0, 0, 0, 0); return d.getTime(); }
 export function daysUntil(ts, now = Date.now()){ return Math.round((startOfDay(ts) - startOfDay(now)) / DAY); }
 export function fmtShortDate(ts){ return new Date(ts).toLocaleDateString(undefined, {day:"numeric", month:"short"}); }
@@ -76,18 +77,21 @@ export function latestHit(it){ return it.hits && it.hits.length ? it.hits[it.hit
 export function latestCause(it){ const h = latestHit(it); return h ? h.cause : null; }
 
 // ---------- adding and editing ----------
-// rows = entries of result.perQuestionResults. Only wrong / unattempted ones are logged.
+// rows = entries of result.perQuestionResults (each may carry its own paperId). Only wrong / unattempted ones are logged.
 // A question already in the book gets a new hit (once per attempt) and goes back to the start of the ladder.
 export function addMistakes(state, rows, now = Date.now()){
-  const all = loadMistakes(); const ak = attemptKeyOf(state);
+  return addMistakeRows(attemptKeyOf(state), rows.map(r => ({...r, paperId: r.paperId || state.paperId})), now);
+}
+export function addMistakeRows(ak, rows, now = Date.now()){
+  const all = loadMistakes();
   const tomorrow = startOfDay(now) + DAY;
   let added = 0, updated = 0;
   for(const r of rows){
     if(!r || (r.result!=="wrong" && r.result!=="unattempted")) continue;
-    const k = mistakeKey(state.paperId, r.n);
+    const k = mistakeKey(r.paperId, r.n);
     let it = all[k]; const isNew = !it;
     if(isNew){
-      it = all[k] = {key:k, paperId:state.paperId, n:r.n, subject:r.subject, chapter:r.chapter, type:r.type, addedAt:now,
+      it = all[k] = {key:k, paperId:r.paperId, n:r.n, subject:r.subject, chapter:r.chapter, type:r.type, addedAt:now,
         misses:0, hits:[], rule:"", status:"active", box:0, due:tomorrow, reps:0, lapses:0, lastReviewed:null, log:[]};
     }
     const same = it.hits.find(h => h.a===ak);

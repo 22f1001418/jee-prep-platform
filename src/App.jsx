@@ -13,6 +13,9 @@ import {ConfigScreen} from "./screens/ConfigScreen";
 import {ExamInterface} from "./screens/ExamInterface";
 import {HistoryScreen} from "./screens/History";
 import {Landing} from "./screens/Landing";
+import {PracticeSession} from "./screens/PracticeSession";
+import {PracticeSetup} from "./screens/PracticeSetup";
+import {saveSession} from "./lib/practice";
 import {MistakeBook} from "./screens/MistakeBook";
 import {PreviewScreen} from "./screens/PreviewScreen";
 import {ProfileScreen, needsProfile} from "./screens/ProfileScreen";
@@ -220,7 +223,7 @@ export function App(){
   if(screen==="landing") return (
     <PaperContext.Provider value={getPaper(selectedPaperId)}>
       <Landing onDemoStart={startDemo} onResume={resumeActive} hasActive={hasActive} onViewHistory={()=>setScreen("history")}
-        onViewAllNotes={()=>setScreen("allnotes")} onViewMistakes={()=>setScreen("mistakes")}
+        onViewAllNotes={()=>setScreen("allnotes")} onViewMistakes={()=>setScreen("mistakes")} onViewPractice={()=>setScreen("practice")}
         selectedPaperId={selectedPaperId} onChoosePaper={choosePaper}/>
       {overwriteWarning && (
         <OverwriteModal
@@ -233,6 +236,8 @@ export function App(){
   );
   if(screen==="profile") return <ProfileScreen onSave={actuallyStartDemo} onBack={backHome}/>;
   if(screen==="history") return <HistoryScreen onBack={backHome} onOpenTest={openHistoryTest}/>;
+  if(screen==="practice") return <PracticeSetup onBack={backHome} onStart={s=>{ saveSession(s); setScreen("practicerun"); }} onResume={()=>setScreen("practicerun")} onOpenResults={()=>setScreen("practicerun")} onOpenMistakes={()=>setScreen("mistakes")}/>;
+  if(screen==="practicerun") return <PracticeSession onExit={()=>setScreen("practice")} onSetup={()=>setScreen("practice")} onOpenMistakes={()=>setScreen("mistakes")}/>;
   if(screen==="mistakes") return <MistakeBook onBack={()=>setScreen(examState && result ? "results" : "landing")}/>;
   if(screen==="allnotes") return <AllNotesScreen onBack={backHome} onViewStarredQ={()=>setScreen("starredq")}/>;
   if(screen==="starredq") return <StarredQuestionsScreen onBack={()=>setScreen("allnotes")}/>;

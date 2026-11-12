@@ -34,6 +34,13 @@ last step marks it mastered. Revision sessions are graded automatically against 
 chapters and a test-by-test view. Your cause tags are also included in the "Export for AI analysis" file. The data lives in the browser store
 (`jee_cbt_mistakes_v1`) and is part of Backup / Restore.
 
+## Practice mode
+
+Build your own set from the whole question bank: pick subjects and chapters (each chip shows your accuracy so far), MCQ or numerical, exam years, and
+a pool (all questions, not attempted yet, your Mistake Book, or starred). Choose 10-50 questions and either **Learn** mode (check each answer
+straight away) or **Test** mode (results at the end, with a question palette), with an optional timer. Sessions are saved, so you can leave and resume.
+Wrong answers go into the Mistake Book; the results screen lets you tag the causes.
+
 ## Where your data lives
 
 History, notes, stars and settings are stored in the browser's IndexedDB. Use **Test History → Backup data** regularly: clearing site data deletes everything.

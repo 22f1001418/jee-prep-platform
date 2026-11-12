@@ -2,6 +2,7 @@ import React, {useEffect, useMemo, useState} from "react";
 import {CauseChips, RuleInput} from "../components/MistakeTagger";
 import {BarRow} from "../components/Charts";
 import {DiagramSVG} from "../components/DiagramSVG";
+import {QuestionView} from "../components/QuestionView";
 import {TeX} from "../components/TeX";
 import {SUBJECTS} from "../lib/constants";
 import {
@@ -59,11 +60,6 @@ function Session({keys, onDone}){
       if(fb){ if(e.key==="Enter" || (!typing && e.key==="ArrowRight")){ e.preventDefault(); next(); } return; }
       if(!q) return;
       if(e.key==="Enter"){ e.preventDefault(); submit(); return; }
-      if(!typing && q.type!=="NUM" && q.options){
-        const idx = "abcd".indexOf(e.key.toLowerCase()); const byNum = ["1","2","3","4"].indexOf(e.key);
-        const i = idx>=0 ? idx : byNum;
-        if(i>=0 && q.options[i]) setResp(q.options[i].id);
-      }
     }
     window.addEventListener("keydown", onKey);
     return ()=>window.removeEventListener("keydown", onKey);
@@ -108,32 +104,7 @@ function Session({keys, onDone}){
         <div style={{fontSize:12, color:"var(--text-faint)", marginBottom:10}}>
           {it.subject} · {it.chapter} · {paper.shortName || paper.name} · Q{it.n}{it.lapses>0 ? ` · slipped ${it.lapses}×` : ""}
         </div>
-        <div style={{fontSize:15.5, marginBottom:12}}><TeX>{q.text}</TeX></div>
-        {q.svg && <div style={{marginBottom:12}}><DiagramSVG id={q.svg}/></div>}
-        {!isNum ? (
-          <div role="radiogroup" aria-label="Options" style={{display:"flex", flexDirection:"column", gap:8}}>
-            {q.options.map((o, i)=>{
-              const chosen = resp===o.id, correct = isOptionCorrect(q, o.id);
-              let border = "var(--border-dark)", bg = "transparent";
-              if(fb){ if(correct){ border = "var(--correct)"; bg = "rgba(46,158,91,.12)"; } else if(chosen){ border = "var(--wrong)"; bg = "rgba(214,67,63,.10)"; } }
-              else if(chosen){ border = "var(--navy)"; bg = "rgba(63,124,196,.12)"; }
-              return (
-                <label key={o.id} style={{display:"flex", alignItems:"center", gap:10, padding:"9px 12px", border:`1.5px solid ${border}`, background:bg, borderRadius:8, cursor: fb ? "default" : "pointer"}}>
-                  <input type="radio" name="rev-opt" disabled={!!fb} checked={chosen} onChange={()=>setResp(o.id)}/>
-                  <span className="mono" style={{fontWeight:700, minWidth:18}}>{["A","B","C","D"][i] || o.id}</span>
-                  <span style={{minWidth:0, overflowWrap:"anywhere"}}><TeX>{o.text}</TeX></span>
-                  {fb && correct && <span style={{marginLeft:"auto", color:"var(--correct)", fontWeight:700}}>✓</span>}
-                </label>
-              );
-            })}
-          </div>
-        ) : (
-          <div>
-            <input autoFocus type="text" inputMode="decimal" value={resp} disabled={!!fb} onChange={e=>setResp(e.target.value)} placeholder="Type your numerical answer"
-              aria-label="Numerical answer"
-              style={{width:220, padding:"9px 12px", fontSize:15, fontFamily:"inherit", border:"1.5px solid var(--border-dark)", borderRadius:8, background:"var(--panel)", color:"var(--text)"}}/>
-          </div>
-        )}
+        <QuestionView q={q} resp={resp} onResp={setResp} reveal={!!fb} disabled={!!fb} autoFocus/>
 
         {!fb && (
           <div style={{marginTop:16, display:"flex", alignItems:"center", gap:12}}>
@@ -363,7 +334,7 @@ function InsightsTab({onGoLog}){
   const chapters = [...chMap.entries()].map(([k, n])=>({subject:k.split("|")[0], chapter:k.split("|").slice(1).join("|"), n})).sort((a, b)=>b.n - a.n).slice(0, 8);
   const maxCh = Math.max(1, ...chapters.map(c=>c.n));
   const rows = attemptRows(items).slice(0, 8);
-  const nameOf = a => { const e = history.find(h=>h.snapshot && `${h.snapshot.paperId}:${h.snapshot.startedAt}`===a); return e ? e.testName : a.split(":")[0]; };
+  const nameOf = a => { if(a.startsWith("practice:")) return "Practice session"; const e = history.find(h=>h.snapshot && `${h.snapshot.paperId}:${h.snapshot.startedAt}`===a); return e ? e.testName : a.split(":")[0]; };
   const reviews = items.flatMap(i=>i.log).sort((a, b)=>b.at - a.at).slice(0, 50);
   const retention = reviews.length ? Math.round(reviews.filter(r=>r.ok).length / reviews.length * 100) : null;
   const card = {padding:"16px 18px", marginBottom:16};
