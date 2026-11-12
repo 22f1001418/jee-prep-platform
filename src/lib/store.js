@@ -12,7 +12,8 @@ const DB_VERSION = 1;
 const OS = "kv";
 const MIGRATED_FLAG = "__migrated_from_localstorage_v1";
 const KEY_PREFIX = "jee_cbt_";
-const LOCAL_ONLY = new Set(["jee_cbt_theme_v1"]);   // read before first paint (see index.html), so it stays in localStorage
+// Kept in localStorage only: the theme (read before first paint, see index.html) and the explain access code (a credential: never in IndexedDB or backups)
+const LOCAL_ONLY = new Set(["jee_cbt_theme_v1", "jee_cbt_access_code_v1"]);
 
 const mem = new Map();
 const dirty = new Map();            // key -> string | null (null = delete), waiting to be flushed
