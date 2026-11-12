@@ -1,9 +1,10 @@
-import React, {useMemo} from "react";
+import React, {useMemo, useState} from "react";
 import {ExamCountdown} from "../components/ExamCountdown";
 import {Icon} from "../components/icons";
 import {activityDays, currentStreak, greeting, weekStrip} from "../lib/activity";
 import {bookSummary, fmtShortDate} from "../lib/mistakes";
 import {PAPER_REGISTRY} from "../lib/papers";
+import {GOAL_CHOICES, estimatePercentile, fmtPct, loadGoal, marksForPercentile, saveGoal} from "../lib/percentile";
 import {loadHistory} from "../lib/persistence";
 import {answeredCount, attemptStats, chapterKey, loadSession} from "../lib/practice";
 import {BarRow} from "../components/Charts";
@@ -14,6 +15,7 @@ const SUBJECT_COLOR = {Mathematics:"#3f7cc4", Physics:"#e08a2c", Chemistry:"#2e9
 // Home: what to do next, how you are doing, and where you are weakest.
 export function Home({hasActive, onNavigate, onResumeTest, onStartPaper, onPracticeChapter, onResumePractice}){
   const profile = loadProfile();
+  const [goal, setGoal] = useState(()=>loadGoal());
   const book = bookSummary();
   const history = useMemo(()=>loadHistory(), []);               // newest first
   const stats = useMemo(()=>attemptStats(), []);
@@ -95,6 +97,32 @@ export function Home({hasActive, onNavigate, onResumeTest, onStartPaper, onPract
       </div>
 
       <div className="home-grid">
+        <div className="card home-card">
+          <div className="home-eyebrow">Target percentile</div>
+          <div style={{display:"flex", alignItems:"center", gap:8, flexWrap:"wrap"}}>
+            <label htmlFor="goal-pct" style={{fontSize:13.5, color:"var(--text-dim)"}}>I am aiming for</label>
+            <select id="goal-pct" value={goal ? String(goal.percentile) : ""} onChange={e=>{ const v = e.target.value==="" ? null : Number(e.target.value); saveGoal(v); setGoal(v==null ? null : {percentile:v}); }}
+              style={{padding:"5px 8px", fontSize:14, fontFamily:"inherit", border:"1.5px solid var(--border-dark)", borderRadius:6, background:"var(--panel)", color:"var(--text)"}}>
+              <option value="">no target</option>
+              {GOAL_CHOICES.map(p=><option key={p} value={p}>{p} percentile</option>)}
+            </select>
+          </div>
+          {!goal ? <div style={{fontSize:13, color:"var(--text-dim)"}}>Pick a target to see how many marks it takes and how far your recent tests are from it.</div> : (()=>{
+            const need = marksForPercentile("general", goal.percentile);
+            const last = history.slice(0, 3);
+            const avg = last.length ? Math.round(last.reduce((s, h)=>s + h.score, 0) / last.length) : null;
+            const avgPct = last.length ? last.reduce((s, h)=>s + estimatePercentile(h.snapshot.paperId, h.score).pct, 0) / last.length : null;
+            return (<>
+              <div style={{fontSize:14, lineHeight:1.5}}>It takes about <strong>{need} marks</strong> on an average-difficulty paper.</div>
+              {avg===null ? <div style={{fontSize:13, color:"var(--text-dim)"}}>Take a test to see where you stand.</div> : (<>
+                <div style={{height:8, background:"var(--border)", borderRadius:4, overflow:"hidden"}}><div style={{width:`${Math.max(2, Math.min(100, avg / need * 100))}%`, height:"100%", background: avg>=need ? "var(--correct)" : "var(--navy)"}}/></div>
+                <div style={{fontSize:13, color:"var(--text-dim)"}}>Last {last.length} test{last.length===1 ? "" : "s"}: average <strong style={{color:"var(--text)"}}>{avg}</strong> marks ≈ {fmtPct(avgPct)} percentile{avg>=need ? ". On target." : `. ${need - avg} marks to go.`}</div>
+              </>)}
+              <div style={{fontSize:11.5, color:"var(--text-faint)"}}>Estimates from published tables, not NTA data.</div>
+            </>);
+          })()}
+        </div>
+
         <div className="card home-card">
           <div className="home-eyebrow">Study streak</div>
           <div style={{display:"flex", alignItems:"center", gap:10}}>

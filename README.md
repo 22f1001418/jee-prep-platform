@@ -32,6 +32,17 @@ Browsing screens share a navigation shell (side menu on wide screens, bottom tab
 **Home** shows what to do next (revision due, resume a test or practice, the next unattempted paper), your study streak, recent scores and your weakest chapters
 with a one-click "Practise". **Mock Tests** lists every paper with your best score and attempts.
 
+## Percentile estimates, strategy lab and exam tools
+
+- **Estimated percentile** (results screen, Home target card, Strategy Lab). Estimates only, never NTA data: a general marks-to-percentile curve from careers360's
+  previous-year table, plus shift-specific tables for the nine 2025 January shifts in the bank (PW's estimates, percentile 90-99 only). Sources and the method are
+  shown in the app and in `src/lib/percentile.js`. Papers without a table use the general curve, which is coarser.
+- **Target percentile** on Home: pick a goal and see the marks it takes and how far your recent tests are.
+- **Strategy Lab** (a tab on the analysis page): marks lost by cause (from your Mistake Book tags), a "move on after N minutes" what-if, and what your score would be worth in percentile
+  if a few things had gone differently.
+- **During a test**: a rough-work panel (draw with mouse, finger or pen, or type; kept per question for that test) and a pace chip showing time on the current question,
+  turning amber and red when you run long (click it to turn hints off).
+
 ## Mistake Book
 
 Every wrong answer from a finished test is added to the Mistake Book automatically. On the review screen you tag *why* you missed it

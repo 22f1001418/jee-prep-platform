@@ -1,3 +1,4 @@
+import {PercentileCard} from "../components/PercentileCard";
 import {addMistakes, attemptKeyOf, loadMistakes, mistakeKey, useMistakes} from "../lib/mistakes";
 import React, {useEffect, useRef, useState} from "react";
 import {BarRow, Donut} from "../components/Charts";
@@ -127,6 +128,7 @@ export function ResultsDashboard({state, result, onViewAnalysis, onReviewWrong, 
           })}
         </div>
 
+        <div style={{marginBottom:18}}><PercentileCard paperId={state.paperId} score={result.totalScore}/></div>
         {wrongRows.length>0 && (
           <div className="card" style={{padding:"14px 18px", marginBottom:18, display:"flex", gap:14, alignItems:"center", flexWrap:"wrap", borderLeft:"4px solid var(--marked)"}}>
             <div style={{flex:"1 1 260px", fontSize:14, lineHeight:1.5}}>

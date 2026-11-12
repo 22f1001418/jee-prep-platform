@@ -3,6 +3,7 @@ import {ExitModal, MAX_EXITS, OverwriteModal, SubmitModal} from "./components/Mo
 import {getSavedTheme} from "./components/ThemeToggle";
 import {FullscreenLostOverlay, enterExamFullscreen, leaveExamFullscreen} from "./lib/fullscreen";
 import {addMistakes} from "./lib/mistakes";
+import {clearScratch} from "./lib/scratch";
 import {LS_SELECTED_PAPER, PaperContext, getPaper, getSelectedPaperId, paperMissing} from "./lib/papers";
 import {HISTORY_CAP, clearActive, hasMeaningfulProgress, loadActive, makeInitialExamState, pushHistory, saveActive, setSubmittedStartedAt} from "./lib/persistence";
 import {rescoreHistory, scoreExam} from "./lib/scoring";
@@ -173,6 +174,7 @@ export function App(){
     // every wrong answer goes into the Mistake Book automatically (untagged); the person tags the cause from the review screen
     if(hres.saved){ try{ addMistakes(finished, res.perQuestionResults.filter(r=>r.result==="wrong")); }catch(err){ console.error("Mistake Book:", err); } }
     clearActive();
+    clearScratch();
     setResult(res);
     setExamState(finished);
     setScreen("results");

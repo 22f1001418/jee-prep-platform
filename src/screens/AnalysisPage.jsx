@@ -1,5 +1,6 @@
 import React, {useState} from "react";
 import {ChapterAnalysis, DeepAnalysis, ResultPill, TimeAnalysis} from "../components/Analysis";
+import {StrategyLab} from "../components/StrategyLab";
 import {AnswerKeyPanel} from "../components/AnswerKey";
 import {NoteEditor, NoteQuestion, QuestionBody} from "../components/NoteEditor";
 import {STATUS_META, SUBJECTS, fmtMinSec} from "../lib/constants";
@@ -69,7 +70,7 @@ export function AnalysisPage({state, result, onBack, onReviewWrong, onKeyChanged
         <h2 style={{marginTop:0}}>JEE Performance Analysis</h2>
 
         <div style={{display:"flex", gap:8, marginBottom:20, flexWrap:"wrap"}}>
-          {[["table","Question-wise Table"],["key","Answer Key"],["notes",`All Notes (${noteCount})`],["deep","Deep Analysis"],["chapters","Chapter Analysis"],["time","Time Analysis"]].map(([k,label])=>(
+          {[["table","Question-wise Table"],["key","Answer Key"],["notes",`All Notes (${noteCount})`],["deep","Deep Analysis"],["chapters","Chapter Analysis"],["time","Time Analysis"],["strategy","Strategy Lab"]].map(([k,label])=>(
             <button key={k} className="btn" onClick={()=>setTab(k)}
               style={{background: tab===k?"var(--navy)":"var(--panel)", color:tab===k?"#fff":"var(--text)", borderColor:tab===k?"var(--navy)":"var(--border-dark)"}}>
               {label}
@@ -191,6 +192,7 @@ export function AnalysisPage({state, result, onBack, onReviewWrong, onKeyChanged
         {tab==="deep" && <DeepAnalysis result={result}/>}
         {tab==="chapters" && <ChapterAnalysis result={result}/>}
         {tab==="time" && <TimeAnalysis result={result}/>}
+        {tab==="strategy" && <StrategyLab state={state} result={result}/>}
 
         <div style={{marginTop:24}}>
           <button className="btn" onClick={onReviewWrong}>Review Wrong Questions →</button>

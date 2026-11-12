@@ -1,8 +1,10 @@
 import React, {useEffect, useRef, useState} from "react";
 import {DiagramSVG} from "../components/DiagramSVG";
+import {ScratchPad} from "../components/ScratchPad";
 import {InfoDot, Legend, PaletteBtn} from "../components/Palette";
 import {TeX} from "../components/TeX";
-import {MARKS_CORRECT, MARKS_WRONG, STATUS, SUBJECTS, fmtTimeMin} from "../lib/constants";
+import {DURATION_SEC, MARKS_CORRECT, MARKS_WRONG, STATUS, SUBJECTS, fmtMinSec, fmtTimeMin} from "../lib/constants";
+import {loadExamPrefs, saveExamPrefs} from "../lib/scratch";
 import {numAttemptLimit, numWrongMarks, usePaper} from "../lib/papers";
 import {saveActive} from "../lib/persistence";
 import {cleanNumInput, loadProfile, loadStarQ, toggleStarQ} from "./ProfileScreen";
@@ -23,6 +25,8 @@ export function ExamInterface({state, setState, onSubmitRequest, onExitRequest, 
   const [profile] = useState(()=>loadProfile());
   const [starList, setStarList] = useState(()=>loadStarQ());
   const isStarred = starList.some(x=>x.paperId===paper.id && x.n===current);
+  const [scratchOpen, setScratchOpen] = useState(false);
+  const [paceHints, setPaceHints] = useState(()=>loadExamPrefs().paceHints);
   const [textScale, setTextScale] = useState(1.1); // A-/A+ control, 0.8x–1.6x (default 1.1x = 15.4px question/option text)
   const tickRef = useRef(null);
   const lastTickTime = useRef(Date.now());
@@ -72,6 +76,7 @@ export function ExamInterface({state, setState, onSubmitRequest, onExitRequest, 
   // option doesn't focus a text input), Left/Right still navigate.
   useEffect(()=>{
     function onKey(e){
+      if(e.target && e.target.closest && e.target.closest("[data-no-exam-keys]")) return;   // typing in the rough-work panel
       if(modalOpen) return; // a Submit / Exit dialog is open: Enter belongs to the dialog, not to the question behind it
       if(e.key === "Enter"){ e.preventDefault(); saveAndNext(); return; }
       if(e.target && (e.target.tagName === "INPUT" || e.target.tagName==="TEXTAREA")) return;
@@ -240,6 +245,25 @@ export function ExamInterface({state, setState, onSubmitRequest, onExitRequest, 
                 {isStarred ? "\u2605 Starred" : "\u2606 Star"}
               </button>
             </span>
+            <div style={{display:"inline-flex", alignItems:"center", gap:8, marginLeft:"auto", marginRight:12}}>
+              {(()=>{
+                const secs = perQ[current].timeSpent || 0, budget = DURATION_SEC / RAW_QUESTIONS.length;
+                const level = secs > budget * 2.5 ? 2 : secs > budget * 1.5 ? 1 : 0;
+                const color = level===2 ? "#b3261e" : level===1 ? "#9a6700" : "#5b6b7c";
+                return (
+                  <button type="button" onClick={()=>{ const v = !paceHints; setPaceHints(v); saveExamPrefs({paceHints:v}); }}
+                    title={paceHints ? "Time on this question. Click to turn pace hints off." : "Pace hints are off. Click to turn them on."}
+                    style={{border:`1px solid ${paceHints && level ? color : "#c9c9c9"}`, background: paceHints && level===2 ? "#fdecea" : paceHints && level===1 ? "#fff6e0" : "#fff", color: paceHints ? color : "#8a97a6",
+                      borderRadius:3, padding:"2px 8px", fontSize:11.5, fontWeight:600, cursor:"pointer", fontFamily:"inherit"}}>
+                    {paceHints ? `\u23F1 ${fmtMinSec(secs)} on this question${level===2 ? " \u00B7 consider moving on" : level===1 ? " \u00B7 running long" : ""}` : "\u23F1 pace hints off"}
+                  </button>
+                );
+              })()}
+              <button type="button" onClick={()=>setScratchOpen(o=>!o)} aria-pressed={scratchOpen} title="Draw or type rough work for this question"
+                style={{border:"1px solid #c9c9c9", background: scratchOpen ? "#0f2a4a" : "#fff", color: scratchOpen ? "#fff" : "#555", borderRadius:3, padding:"2px 8px", fontSize:11.5, fontWeight:600, cursor:"pointer", fontFamily:"inherit"}}>
+                {"\u270E"} Rough work
+              </button>
+            </div>
             <div className="cbt-fontctl" title="Question text size">
               <button onClick={()=>setTextScale(t=>Math.max(0.8, Number((t-0.1).toFixed(2))))} title="Decrease text size">A⁻</button>
               <span/>
@@ -346,6 +370,7 @@ export function ExamInterface({state, setState, onSubmitRequest, onExitRequest, 
           </div>
         </div>
       </div>
+      {scratchOpen && !modalOpen && <ScratchPad examId={state.startedAt} qn={current} onClose={()=>setScratchOpen(false)}/>}
     </div>
   );
 }
