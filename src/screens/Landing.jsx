@@ -1,3 +1,4 @@
+import {dueCount} from "../lib/mistakes";
 import React, {useEffect, useMemo, useState} from "react";
 import {ThemeToggle} from "../components/ThemeToggle";
 import {PAPER_REGISTRY} from "../lib/papers";
@@ -69,7 +70,8 @@ export function ExamCountdown(){
 }
 
 // ---------- Landing screen ----------
-export function Landing({onDemoStart, onResume, hasActive, onViewHistory, onViewAllNotes, selectedPaperId, onChoosePaper}){
+export function Landing({onDemoStart, onResume, hasActive, onViewHistory, onViewAllNotes, onViewMistakes, selectedPaperId, onChoosePaper}){
+  const due = useMemo(()=>dueCount(), []);
   // Paper list shows exactly 9 rows; anything beyond that scrolls.
   const paperListRef = React.useRef(null);
   React.useEffect(()=>{
@@ -131,6 +133,9 @@ export function Landing({onDemoStart, onResume, hasActive, onViewHistory, onView
           {hasActive && <button className="btn btn-save" onClick={onResume}>Resume In-Progress Test</button>}
           <button className="btn" onClick={onViewHistory}>View Test History</button>
           <button className="btn" onClick={onViewAllNotes}>All Notes</button>
+          <button className="btn" onClick={onViewMistakes} style={due>0 ? {borderColor:"var(--wrong)"} : null}>
+            Mistake Book{due>0 && <span style={{marginLeft:8, background:"var(--wrong)", color:"#fff", borderRadius:10, padding:"1px 8px", fontSize:12, fontWeight:700}}>{due} due</span>}
+          </button>
         </div>
       </div>
     </div>

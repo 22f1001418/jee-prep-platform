@@ -1,8 +1,10 @@
 import React from "react";
 import {DiagramSVG} from "../components/DiagramSVG";
+import {MistakeTagger} from "../components/MistakeTagger";
 import {TeX} from "../components/TeX";
 import {exportWrongUnattemptedForAI} from "../lib/aiExport";
 import {fmtMinSec} from "../lib/constants";
+import {addMistakes, attemptKeyOf, loadMistakes, mistakeKey, useMistakes} from "../lib/mistakes";
 import {getPaper} from "../lib/papers";
 import {isOptionCorrect} from "../lib/scoring";
 
@@ -18,6 +20,10 @@ export function ReviewSection({state, result, kind, onBack}){
     return false;
   });
   const reviewList = kind==="notchosen" ? (result.notChosen || []) : list;
+  useMistakes();
+  const book = loadMistakes(), ak = attemptKeyOf(state);
+  const taggable = kind==="wrong" || kind==="unattempted";
+  const notInBook = taggable ? reviewList.filter(r=>{ const it = book[mistakeKey(state.paperId, r.n)]; return !(it && it.hits.some(h=>h.a===ak)); }) : [];
   const titles = {wrong:"Wrong Questions", unattempted:"Unattempted Questions", marked:"Marked for Review", notchosen:"Optional Numericals You Did Not Choose (not scored)"};
   return (
     <div style={{minHeight:"100vh", padding:"28px 20px"}}>
@@ -33,6 +39,12 @@ export function ReviewSection({state, result, kind, onBack}){
           )}
         </div>
         <h2 style={{marginTop:0}}>{titles[kind]} ({reviewList.length})</h2>
+        {taggable && reviewList.length>0 && (
+          <div style={{display:"flex", gap:12, alignItems:"center", flexWrap:"wrap", marginBottom:14, fontSize:13.5, color:"var(--text-dim)"}}>
+            <span>Tag why you missed each question. It goes into your Mistake Book and comes back for revision.</span>
+            {notInBook.length>0 && <button className="btn btn-primary" onClick={()=>addMistakes(state, notInBook)}>Add all {notInBook.length} to revision queue</button>}
+          </div>
+        )}
         {reviewList.length===0 && <div className="card" style={{padding:30, textAlign:"center", color:"var(--text-dim)"}}>Nothing here — nice work.</div>}
         <div style={{display:"flex", flexDirection:"column", gap:16}}>
           {reviewList.map(r=>{
@@ -66,6 +78,7 @@ export function ReviewSection({state, result, kind, onBack}){
                   <span>Correct answer: <strong className="mono" style={{color:"var(--correct)"}}>{r.correctAnswer}</strong></span>
                   <span>Marks: <strong className="mono">{r.result==="notchosen" ? "not scored" : (r.marks>0?`+${r.marks}`:r.marks)}</strong></span>
                 </div>
+                {taggable && (r.result==="wrong" || r.result==="unattempted") && <MistakeTagger state={state} r={r}/>}
               </div>
             );
           })}

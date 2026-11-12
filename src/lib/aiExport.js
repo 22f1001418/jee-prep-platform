@@ -1,3 +1,4 @@
+import {causeLabelsForAttempt} from "./mistakes";
 import {DURATION_SEC, MARKS_CORRECT, MARKS_UNATTEMPTED, MARKS_WRONG, STATUS, STATUS_META, SUBJECTS, fmtMinSec} from "./constants";
 import {FIG_IMAGES} from "./data";
 import {loadAllImgs, loadAllNotes} from "./notes";
@@ -15,7 +16,8 @@ export const AI_MASTER_PROMPT = "# MASTER PROMPT — JEE MAIN MOCK TEST FORENSIC
 export function buildAIReport(state, result, dateStr){
   const paper = getPaper(state.paperId);
   const qMap = {}; paper.questions.forEach(q=>{ qMap[q.n] = q; });
-  const R = result.perQuestionResults;
+  const causes = causeLabelsForAttempt(state);   // "why I missed it" tags from the Mistake Book
+  const R = result.perQuestionResults.map(r=>causes[r.n] ? {...r, errorTag: causes[r.n]} : r);
   const attemptKey = `${state.paperId}:${state.startedAt}`;
   const notesAll = (loadAllNotes()[attemptKey]) || {}, imgsAll = (loadAllImgs()[attemptKey]) || {};
   const cell = t => String(t ?? "").replace(/\|/g,"\\|").replace(/\s*\n\s*/g," ");
