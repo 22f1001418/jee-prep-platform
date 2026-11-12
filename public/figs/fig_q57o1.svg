@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="185" viewBox="0 0 240 185" font-family="Times New Roman, serif">
+<rect width="240" height="185" fill="#fff"/>
+<line x1="52" y1="10" x2="52" y2="150" stroke="#222" stroke-width="1.6"/>
+<line x1="52" y1="150" x2="214" y2="150" stroke="#222" stroke-width="1.6"/>
+<text x="24" y="76" font-size="20" fill="#222" text-anchor="middle">N</text>
+<line x1="11" y1="82" x2="37" y2="82" stroke="#222" stroke-width="1.4"/>
+<text x="22" y="103" font-size="20" fill="#222" text-anchor="middle">N<tspan font-size="13" dy="5">0</tspan></text>
+<text x="133" y="177" font-size="18" fill="#222" text-anchor="middle">time</text>
+<line x1="56.0" y1="16.0" x2="200.0" y2="102.0" stroke="#222" stroke-width="1.8"/>
+</svg>

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="260" height="170" viewBox="0 0 260 170" font-family="'Times New Roman',Times,serif" font-size="17">
+<rect width="260" height="170" fill="#fff"/>
+<g stroke="#000" stroke-width="1.6" fill="none">
+<line x1="40" y1="140" x2="40" y2="30"/>
+<line x1="40" y1="140" x2="226" y2="140"/>
+<line x1="91" y1="140" x2="128" y2="30"/>
+<line x1="148" y1="140" x2="185" y2="30"/>
+</g>
+<polygon points="40,18 35,32 45,32" fill="#000"/>
+<polygon points="238,140 224,135 224,145" fill="#000"/>
+<text x="13" y="30" font-style="italic">V<tspan font-size="12" dy="4" font-style="normal">0</tspan></text>
+<text x="121" y="24">M<tspan font-size="12" dy="4">1</tspan></text>
+<text x="178" y="24">M<tspan font-size="12" dy="4">2</tspan></text>
+<text x="240" y="152" font-style="italic">&#957;</text>
+</svg>

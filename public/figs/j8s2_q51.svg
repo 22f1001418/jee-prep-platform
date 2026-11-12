@@ -1,0 +1,25 @@
+<svg viewBox="0 0 720 300" xmlns="http://www.w3.org/2000/svg" font-family="Georgia, 'Times New Roman', serif">
+<rect x="1" y="1" width="718" height="298" fill="white" stroke="black" stroke-width="2"/>
+<line x1="360" y1="1" x2="360" y2="299" stroke="black" stroke-width="2"/>
+<line x1="1" y1="76" x2="719" y2="76" stroke="black" stroke-width="2"/>
+<line x1="1" y1="132" x2="719" y2="132" stroke="black" stroke-width="2"/>
+<line x1="1" y1="188" x2="719" y2="188" stroke="black" stroke-width="2"/>
+<line x1="1" y1="244" x2="719" y2="244" stroke="black" stroke-width="2"/>
+
+<text x="15" y="28" font-weight="bold" font-size="20">List-I</text>
+<text x="15" y="54" font-weight="bold" font-size="20">Mass of substance</text>
+<text x="375" y="28" font-weight="bold" font-size="20">List-II</text>
+<text x="375" y="54" font-weight="bold" font-size="20">Number of atoms</text>
+
+<text x="15" y="110" font-size="19">A. 1.8 mg water</text>
+<text x="375" y="110" font-size="19">I. 2 &#215; 10<tspan dy="-7" font-size="13">-4</tspan><tspan dy="7"> &#215; N</tspan><tspan dy="4" font-size="13">A</tspan></text>
+
+<text x="15" y="166" font-size="19">B. 9.8 mg sulphuric acid</text>
+<text x="375" y="166" font-size="19">II. 1.5 &#215; 10<tspan dy="-7" font-size="13">-4</tspan><tspan dy="7"> &#215; N</tspan><tspan dy="4" font-size="13">A</tspan></text>
+
+<text x="15" y="222" font-size="19">C. 1.8 mg carbon</text>
+<text x="375" y="222" font-size="19">III. 3 &#215; 10<tspan dy="-7" font-size="13">-4</tspan><tspan dy="7"> &#215; N</tspan><tspan dy="4" font-size="13">A</tspan></text>
+
+<text x="15" y="278" font-size="19">D. 5.85 mg salt (NaCl)</text>
+<text x="375" y="278" font-size="19">IV. 7 &#215; 10<tspan dy="-7" font-size="13">-4</tspan><tspan dy="7"> &#215; N</tspan><tspan dy="4" font-size="13">A</tspan></text>
+</svg>

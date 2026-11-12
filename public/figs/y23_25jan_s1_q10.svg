@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="280" viewBox="0 0 300 280" font-family="Times New Roman, Times, serif">
+<rect width="300" height="280" fill="#fff"/>
+<g stroke="#222" stroke-width="3" fill="none" stroke-linecap="butt">
+<line x1="55" y1="248" x2="55" y2="25"/><line x1="55" y1="248" x2="285" y2="248"/>
+<line x1="55" y1="248" x2="228" y2="64"/>
+<path d="M 102 198 A 68 68 0 0 1 120 248" stroke-width="2.6"/></g>
+<text x="138" y="222" font-size="23" fill="#222">45°</text>
+<text x="190" y="276" font-size="25" fill="#222" text-anchor="middle">Load (N)</text>
+<text transform="translate(26,140) rotate(-90)" font-size="25" fill="#222" text-anchor="middle">Extension (m)</text>
+</svg>

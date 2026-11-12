@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="285" viewBox="0 0 520 285" font-family="'Times New Roman',Times,serif" font-size="25" fill="#000">
+<rect width="520" height="285" fill="#fff"/>
+<g text-anchor="middle">
+<text x="254" y="28">1</text>
+<text x="182" y="86">2</text><text x="336" y="88">3</text>
+<text x="114" y="148">4</text><text x="254" y="150">5</text><text x="401" y="149">6</text>
+<text x="57" y="206">7</text><text x="184" y="208">8</text><text x="335" y="206">9</text><text x="448" y="208">10</text>
+</g>
+<g fill="#000"><circle cx="44" cy="224" r="2.2"/><circle cx="30" cy="244" r="2.2"/><circle cx="15" cy="263" r="2.2"/>
+<circle cx="468" cy="230" r="2.2"/><circle cx="483" cy="246" r="2.2"/><circle cx="498" cy="264" r="2.2"/></g>
+</svg>

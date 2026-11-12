@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="160" viewBox="0 0 200 160">
+<rect width="200" height="160" fill="#ffffff"/>
+<g stroke="#000" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round">
+<line x1="30" y1="140" x2="30" y2="12"/><polygon points="30,8 26,18 34,18" fill="#000"/>
+<line x1="30" y1="140" x2="180" y2="140"/><polygon points="186,140 176,136 176,144" fill="#000"/>
+<path d="M30,140 C40,75 70,42 150,28" />
+</g>
+<g font-family="Times New Roman, serif" font-size="15" fill="#000">
+<text x="14" y="16">V</text><text x="176" y="156">t</text></g>
+</svg>

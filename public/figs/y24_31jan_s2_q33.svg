@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="330" height="110" viewBox="0 0 330 110" font-family="Times New Roman, serif" font-size="26">
+<text x="8" y="48" >Group</text>
+<line x1="95" y1="20" x2="95" y2="92" stroke="#000" stroke-width="2.5"/>
+<polygon points="86,84 104,84 95,102" fill="#000"/>
+<text x="125" y="40">A'B'</text>
+<line x1="185" y1="33" x2="233" y2="33" stroke="#000" stroke-width="2.5"/>
+<polygon points="231,26 245,33 231,40" fill="#000"/>
+<text x="255" y="40">Period</text>
+<text x="125" y="88">C'D'</text>
+</svg>

@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 260" width="260" height="260" font-family="Georgia, 'Times New Roman', serif">
+  <!-- Y axis -->
+  <line x1="60" y1="130" x2="60" y2="20" stroke="black" stroke-width="1.5"/>
+  <polygon points="60,14 55,24 65,24" fill="black"/>
+  <text x="68" y="24" font-size="15" font-style="italic">Y</text>
+
+  <!-- X axis -->
+  <line x1="60" y1="130" x2="230" y2="130" stroke="black" stroke-width="1.5"/>
+  <polygon points="238,130 228,125 228,135" fill="black"/>
+  <text x="196" y="122" font-size="14" font-style="italic">X axis</text>
+
+  <!-- piece moving along +Y with dot (10 kg piece, 10 m/s) -->
+  <line x1="60" y1="130" x2="60" y2="35" stroke="black" stroke-width="1.6"/>
+  <polygon points="60,28 55,38 65,38" fill="black"/>
+  <circle cx="60" cy="130" r="3.2" fill="black"/>
+
+  <!-- piece moving at angle theta below X axis (20 m/s at angle theta) -->
+  <line x1="60" y1="130" x2="112" y2="178" stroke="black" stroke-width="1.6"/>
+  <polygon points="117,183 106,180 112,171" fill="black"/>
+
+  <!-- angle arc for theta -->
+  <path d="M 90 130 A 30 30 0 0 1 83 151" fill="none" stroke="black" stroke-width="1.1"/>
+  <text x="80" y="148" font-size="14" font-style="italic">&#952;</text>
+</svg>

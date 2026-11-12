@@ -1,0 +1,26 @@
+<svg viewBox="0 0 780 300" xmlns="http://www.w3.org/2000/svg" font-family="Georgia, 'Times New Roman', serif">
+<rect x="1" y="1" width="778" height="298" fill="white" stroke="black" stroke-width="2"/>
+<line x1="430" y1="1" x2="430" y2="299" stroke="black" stroke-width="2"/>
+<line x1="1" y1="92" x2="779" y2="92" stroke="black" stroke-width="2"/>
+<line x1="1" y1="148" x2="779" y2="148" stroke="black" stroke-width="2"/>
+<line x1="1" y1="204" x2="779" y2="204" stroke="black" stroke-width="2"/>
+<line x1="1" y1="260" x2="779" y2="260" stroke="black" stroke-width="2"/>
+
+<text x="15" y="28" font-weight="bold" font-size="19">List-I</text>
+<text x="15" y="54" font-weight="bold" font-size="18">Electronic configuration of</text>
+<text x="15" y="76" font-weight="bold" font-size="18">neutral atom (where n = 2)</text>
+<text x="445" y="28" font-weight="bold" font-size="19">List-II</text>
+<text x="445" y="54" font-weight="bold" font-size="18">1<tspan dy="-7" font-size="12">st</tspan><tspan dy="7"> Ionization Energy (kJ mol</tspan><tspan dy="-7" font-size="12">-1</tspan><tspan dy="7">)</tspan></text>
+
+<text x="15" y="126" font-size="19">A. ns<tspan dy="-7" font-size="13">2</tspan></text>
+<text x="445" y="126" font-size="19">I. 2080</text>
+
+<text x="15" y="182" font-size="19">B. ns<tspan dy="-7" font-size="13">2</tspan><tspan dy="7">np</tspan><tspan dy="-7" font-size="13">1</tspan></text>
+<text x="445" y="182" font-size="19">II. 899</text>
+
+<text x="15" y="238" font-size="19">C. ns<tspan dy="-7" font-size="13">2</tspan><tspan dy="7">np</tspan><tspan dy="-7" font-size="13">3</tspan></text>
+<text x="445" y="238" font-size="19">III. 800</text>
+
+<text x="15" y="288" font-size="19">D. ns<tspan dy="-7" font-size="13">2</tspan><tspan dy="7">np</tspan><tspan dy="-7" font-size="13">6</tspan></text>
+<text x="445" y="288" font-size="19">IV. 1402</text>
+</svg>

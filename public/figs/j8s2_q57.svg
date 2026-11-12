@@ -1,0 +1,12 @@
+<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" font-family="Georgia, 'Times New Roman', serif">
+<rect x="0" y="0" width="400" height="300" fill="white"/>
+<line x1="60" y1="30" x2="60" y2="250" stroke="black" stroke-width="2"/>
+<line x1="60" y1="250" x2="360" y2="250" stroke="black" stroke-width="2"/>
+<line x1="60" y1="250" x2="320" y2="60" stroke="black" stroke-width="2"/>
+<polygon points="60,20 54,34 66,34" fill="black"/>
+<polygon points="370,250 356,244 356,256" fill="black"/>
+<text x="8" y="118" font-size="19" font-style="italic">t<tspan dy="6" font-size="13">1/2</tspan></text>
+<line x1="8" y1="135" x2="30" y2="135" stroke="black" stroke-width="1.5"/>
+<text x="13" y="155" font-size="19" font-style="italic">s</text>
+<text x="150" y="280" font-size="18" font-style="italic">[A]<tspan dy="5" font-size="13">o</tspan><tspan dy="-5">/mol L</tspan><tspan dy="-7" font-size="13">-1</tspan></text>
+</svg>

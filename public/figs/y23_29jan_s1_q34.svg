@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="270" viewBox="0 0 420 270" font-family="Times New Roman, serif">
+<rect width="420" height="270" fill="#fff"/>
+<g stroke="#000" stroke-width="2" fill="none">
+<line x1="40" y1="215" x2="40" y2="14"/>
+<polyline points="31,26 40,12 49,26" stroke-width="2"/>
+<line x1="40" y1="215" x2="400" y2="215"/>
+<polyline points="386,206 402,215 386,224"/>
+<path d="M40 85 C 62 135, 85 168, 122 168 C 160 168, 190 130, 225 100 C 250 78, 270 48, 288 22" stroke-width="2"/>
+</g>
+<line x1="40" y1="85" x2="340" y2="85" stroke="#000" stroke-width="2.5" stroke-dasharray="14,8"/>
+<circle cx="58" cy="124" r="4.5" fill="#000"/>
+<text x="68" y="140" font-size="22" font-style="italic">A</text>
+<text x="244" y="52" font-size="22" font-style="italic">B</text>
+<text x="6" y="112" font-size="26">pV</text>
+<text x="190" y="255" font-size="26" font-style="italic">p</text>
+<line x1="215" y1="247" x2="262" y2="247" stroke="#000" stroke-width="2.5"/>
+<polygon points="262,240 276,247 262,254" fill="#000"/>
+<line x1="18" y1="95" x2="18" y2="62" stroke="#000" stroke-width="3"/><polygon points="9,66 18,48 27,66" fill="#000"/></svg>

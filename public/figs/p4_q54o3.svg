@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="260" height="190" viewBox="0 0 260 190" font-family="Times New Roman, serif">
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#222"/></marker></defs>
+<rect width="260" height="190" fill="#fff"/>
+<line x1="58" y1="155" x2="58" y2="10" stroke="#222" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="58" y1="155" x2="238" y2="155" stroke="#222" stroke-width="1.6"/>
+<text transform="translate(18,88) rotate(-90)" font-size="14" fill="#222" text-anchor="middle">Reactant</text><text transform="translate(34,88) rotate(-90)" font-size="14" fill="#222" text-anchor="middle">Concentration</text>
+<text x="158" y="177" font-size="15" fill="#222" text-anchor="middle">Time →</text>
+<line x1="58" y1="72" x2="214" y2="72" stroke="#222" stroke-width="1.8"/>
+</svg>

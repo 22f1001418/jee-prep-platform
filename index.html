@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<meta name="theme-color" content="#0f2a4a"/>
+<meta name="description" content="JEE Main CBT mock-test platform: NTA-style exam interface, past papers, analysis, notes and history. Works offline."/>
+<link rel="icon" href="/icons/icon.svg" type="image/svg+xml"/>
+<link rel="apple-touch-icon" href="/icons/icon-192.png"/>
+<title>JEE CBT Test Platform</title>
+<script>
+// Apply the saved theme before first paint (no flash). Kept in localStorage on purpose; see src/lib/store.js.
+(function(){try{var t=localStorage.getItem("jee_cbt_theme_v1");if(t==="dark")document.documentElement.setAttribute("data-theme","dark");}catch(e){}})();
+</script>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$', '$']], displayMath: [['$$', '$$']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] },
+  startup: { typeset: false }
+};
+</script>
+<!-- Self-hosted MathJax (copied from node_modules by scripts/copy-mathjax.mjs) so the app works offline -->
+<script src="/vendor/mathjax/tex-mml-chtml.js"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="module" src="/src/main.jsx"></script>
+</body>
+</html>

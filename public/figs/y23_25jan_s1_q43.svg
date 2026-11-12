@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="365" height="251" viewBox="0 0 365 251" font-family="Times New Roman, Times, serif">
+<rect width="365" height="251" fill="#fff"/>
+<g stroke="#000" stroke-width="3" fill="none"><line x1="145" y1="10" x2="145" y2="208"/><line x1="145" y1="208" x2="357" y2="208"/>
+<line x1="145" y1="208" x2="283" y2="42" stroke-width="3.4"/></g>
+<g stroke="#000" stroke-width="2" fill="#000"><line x1="68" y1="44" x2="68" y2="20" fill="none"/><path d="M63 28 L68 17 L73 28 Z"/></g>
+<text x="68" y="76" font-size="24" font-style="italic" text-anchor="middle">π</text>
+<line x1="58" y1="82" x2="78" y2="82" stroke="#000" stroke-width="2"/>
+<text x="68" y="106" font-size="24" font-style="italic" text-anchor="middle">C</text>
+<text x="70" y="136" font-size="20" text-anchor="middle">(Atm/<tspan font-style="italic">gL</tspan><tspan font-size="13" dy="-7" font-style="italic">−1</tspan><tspan dy="7">)</tspan></text>
+<text x="190" y="238" font-size="23" font-style="italic">C<tspan font-style="normal">(</tspan>gL<tspan font-size="14" dy="-8">−1</tspan><tspan dy="8" font-style="normal">)</tspan></text>
+<g stroke="#000" stroke-width="2.2" fill="#000"><line x1="288" y1="231" x2="318" y2="231"/><path d="M314 225 L324 231 L314 237 Z"/></g>
+</svg>

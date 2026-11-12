@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="260" height="300" viewBox="0 0 260 300" font-family="'Times New Roman',Times,serif" font-size="26" fill="#000">
+<rect width="260" height="300" fill="#fff"/>
+<line x1="130" y1="32" x2="130" y2="262" stroke="#000" stroke-width="2"/>
+<text x="130" y="24" text-anchor="middle">CHO</text>
+<line x1="45" y1="70" x2="205" y2="70" stroke="#000" stroke-width="2"/>
+<line x1="45" y1="115" x2="205" y2="115" stroke="#000" stroke-width="2"/>
+<line x1="45" y1="165" x2="205" y2="165" stroke="#000" stroke-width="2"/>
+<line x1="45" y1="212" x2="205" y2="212" stroke="#000" stroke-width="2"/>
+<text x="38" y="77" text-anchor="end">H</text>
+<text x="38" y="122" text-anchor="end">HO</text>
+<text x="38" y="172" text-anchor="end">H</text>
+<text x="38" y="219" text-anchor="end">H</text>
+<text x="212" y="77">OH</text>
+<text x="212" y="122">H</text>
+<text x="212" y="172">OH</text>
+<text x="212" y="219">OH</text>
+<text x="130" y="288" text-anchor="middle">CH<tspan font-size="18" dy="5">2</tspan><tspan dy="-5">OH</tspan></text>
+</svg>

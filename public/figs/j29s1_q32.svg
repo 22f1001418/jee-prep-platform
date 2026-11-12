@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 480" width="1000" height="480" font-family="Times New Roman, serif" fill="#000" stroke="#000">
+<rect width="1000" height="480" fill="#fff" stroke="none"/>
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0,1 L10,5 L0,9 z" fill="#000" stroke="none"/></marker></defs>
+<g stroke-width="2.2" fill="none">
+<!-- panel 1 -->
+<line x1="97" y1="210" x2="97" y2="22" marker-end="url(#ah)"/><line x1="97" y1="210" x2="342" y2="210" marker-end="url(#ah)"/>
+<path d="M97 210 C112 130 150 92 205 78 C240 68 265 64 292 63"/>
+<!-- panel 2 -->
+<line x1="597" y1="205" x2="597" y2="22" marker-end="url(#ah)"/><line x1="597" y1="205" x2="835" y2="205" marker-end="url(#ah)"/>
+<path d="M597 205 C650 198 690 180 705 130 C712 105 716 80 718 62"/>
+<!-- panel 3 -->
+<line x1="97" y1="442" x2="97" y2="265" marker-end="url(#ah)"/><line x1="97" y1="442" x2="340" y2="442"/>
+<line x1="97" y1="442" x2="300" y2="288"/>
+<!-- panel 4 -->
+<line x1="597" y1="455" x2="597" y2="268" marker-end="url(#ah)"/><line x1="597" y1="455" x2="838" y2="455"/>
+<path d="M608 272 C612 360 650 415 700 420 C725 423 745 423 758 422"/>
+</g>
+<g stroke="none" font-size="25">
+<text x="28" y="30">(1)</text><text x="527" y="30">(2)</text><text x="28" y="285">(3)</text><text x="527" y="285">(4)</text>
+<text x="74" y="224">0</text><text x="574" y="220">0</text><text x="74" y="458">0</text><text x="574" y="470">0</text>
+<text x="187" y="244" font-size="27">λ →</text><text x="692" y="232" font-size="27">λ →</text><text x="187" y="474" font-size="27">λ →</text><text x="692" y="478" font-size="27">λ →</text>
+<g font-size="26" font-weight="bold" text-anchor="middle">
+<text x="80" y="72">1</text><text x="80" y="105">K</text>
+<text x="574" y="72">1</text><text x="574" y="105">K</text>
+<text x="80" y="327">1</text><text x="80" y="353">K</text>
+<text x="574" y="327">1</text><text x="574" y="353">K</text></g>
+</g>
+<g stroke="#000" stroke-width="2"><line x1="68" y1="78" x2="92" y2="78"/><line x1="562" y1="78" x2="586" y2="78"/><line x1="68" y1="333" x2="92" y2="333"/><line x1="562" y1="333" x2="586" y2="333"/></g>
+</svg>
