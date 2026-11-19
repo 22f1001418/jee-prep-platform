@@ -1,4 +1,5 @@
 import {Icon} from "../components/icons";
+import {EmptyState} from "../components/ui";
 import React, {useState} from "react";
 import {DiagramSVG} from "../components/DiagramSVG";
 import {TeX} from "../components/TeX";
@@ -29,12 +30,13 @@ export function StarredQuestionsScreen({onBack}){
   // counts what is listed and still starred (stars of a paper that is gone, or of a removed question, are not listed, so not counted)
   const shownCount = shownGroups.reduce((n,g)=>n+g.qs.filter(x=>keys.has(starQKey(x.it.paperId, x.it.n))).length, 0);
   return (
-    <div style={{minHeight:"100vh", padding:"28px 20px"}}>
-      <div style={{maxWidth:820, margin:"0 auto"}}>
+    <div className="page">
+      <div>
         <button className="btn" onClick={onBack} style={{marginBottom:16}}><Icon name="arrow-left" size={16}/> Back</button>
-        <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", gap:10, flexWrap:"wrap"}}>
-          <h2 style={{margin:"0 0 16px"}}>Starred Questions ({shownCount})</h2>
-          <div style={{position:"relative", marginBottom:16}}>
+        <div className="page-head">
+          <span className="icon-tile"><Icon name="star" size={22}/></span>
+          <div style={{minWidth:0}}><h1 style={{margin:0, fontSize:26}}>Starred Questions ({shownCount})</h1><p>Questions you starred while solving, from every paper you've opened.</p></div>
+          <div className="page-head-actions" style={{position:"relative"}}>
             <button className="btn" onClick={()=>setFilterOpen(o=>!o)} aria-haspopup="true" aria-expanded={filterOpen}>
               Filter <Icon name="chevron-down" size={14}/>
             </button>
@@ -54,9 +56,6 @@ export function StarredQuestionsScreen({onBack}){
             )}
           </div>
         </div>
-        <p style={{fontSize:13.5, color:"var(--text-dim)", marginTop:-6, marginBottom:20}}>
-          Questions you starred while solving, from every paper you've opened.
-        </p>
         {chap && (
           <div style={{display:"flex", alignItems:"center", gap:8, marginBottom:16, flexWrap:"wrap", fontSize:13}}>
             <span style={{color:"var(--text-dim)"}}>Showing:</span>
@@ -68,9 +67,9 @@ export function StarredQuestionsScreen({onBack}){
           </div>
         )}
         {groups.length===0 && (
-          <div className="card" style={{padding:30, textAlign:"center", color:"var(--text-dim)"}}>
-            No starred questions yet. While solving a test, tap "Star" next to the question number.
-          </div>
+          <EmptyState icon="star" title="No starred questions yet">
+            While solving a test, tap "Star" next to the question number. You can also star questions from the results table.
+          </EmptyState>
         )}
         <div style={{display:"flex", flexDirection:"column", gap:22}}>
           {shownGroups.map(g=>(
@@ -82,11 +81,12 @@ export function StarredQuestionsScreen({onBack}){
                   const on = keys.has(k);
                   const show = !!revealed[k];
                   return (
-                    <div key={k} className="card" style={{padding:"14px 18px"}}>
+                    <div key={k} className="card" style={{padding:"14px 18px", opacity: on ? 1 : .6, transition:"opacity .2s"}}>
                       <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", gap:8, fontSize:12.5, color:"var(--text-faint)", marginBottom:10}}>
                         <span><strong style={{color:"var(--text)"}}>Q{q.n}</strong> · {q.subject} · {q.chapter}</span>
                         <button onClick={()=>flip(it)} aria-pressed={on} aria-label={on ? "Remove star" : "Star this question"} title={on ? "Remove star" : "Star this question"}
-                          style={{background:"none", border:"none", padding:0, fontSize:20, lineHeight:1, cursor:"pointer", color: on ? "#f5c518" : "var(--text-faint)"}}>
+                          style={{background:"none", border:"none", padding:0, fontSize:12.5, fontWeight:650, lineHeight:1, cursor:"pointer", display:"inline-flex", alignItems:"center", gap:6, color: on ? "#c99a00" : "var(--brand)"}}>
+                          {!on && <span>Removed · Undo</span>}
                           <Icon name="star" size={17} fill={on}/>
                         </button>
                       </div>

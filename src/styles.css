@@ -122,7 +122,7 @@ input:focus-visible, button:focus-visible{outline:2px solid var(--navy); outline
 .cbt-fontctl button{border:none; background:#fff; padding:2px 8px; font-size:11px; font-weight:700; color:#555;}
 .cbt-fontctl button:hover{background:#f0f0f0;}
 .cbt-fontctl span{width:1px; align-self:stretch; background:#c9c9c9;}
-.cbt-star{border:1px solid #c9c9c9; border-radius:3px; background:#fff; padding:2px 10px; font-size:12px; font-weight:700; color:#555; cursor:pointer; margin-left:12px; line-height:1.4;}
+.cbt-star{border:1px solid #c9c9c9; border-radius:3px; background:#fff; padding:3px 12px; font-size:13px; font-weight:700; color:#555; cursor:pointer; margin-left:12px; line-height:1.4;}
 .cbt-star:hover{background:#f0f0f0;}
 .cbt-star.on{color:#a87500; border-color:#e2b53c; background:#fff8e1;}
 .cbt-scroll{flex:1 1 auto; overflow:auto; padding:12px 14px 16px; min-height:0;}

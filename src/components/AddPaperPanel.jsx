@@ -78,19 +78,26 @@ export function AddPaperPanel({open, onClose}){
           ) : (
             <div>
               <div style={{fontWeight:700, color:"var(--correct)", display:"flex", gap:6, alignItems:"center"}}><Icon name="check-circle" size={17}/> Ready to add</div>
-              <div style={{margin:"6px 0", fontSize:13.5, lineHeight:1.6}}>
-                <b>{r.summary.name}</b> <span style={{color:"var(--text-faint)"}}>({r.summary.id})</span><br/>
-                {r.summary.layout}: {SUBJECTS.map(s => `${s} ${r.summary.per[s].MCQ} MCQ + ${r.summary.per[s].NUM} numerical`).join(" · ")}<br/>
-                {r.summary.figures} figure{r.summary.figures===1?"":"s"}
+              <div style={{margin:"6px 0 10px", fontSize:13.5, lineHeight:1.6}}>
+                <b>{r.summary.name}</b> <span style={{color:"var(--text-faint)"}}>({r.summary.id})</span>
+                <div style={{color:"var(--text-dim)", fontSize:12.5}}>{r.summary.layout} · {r.summary.figures} figure{r.summary.figures===1?"":"s"}</div>
+              </div>
+              <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(150px, 1fr))", gap:8, marginBottom:12}}>
+                {SUBJECTS.map(s => (
+                  <div key={s} style={{border:"1px solid var(--border)", borderRadius:10, padding:"8px 12px", background:"var(--panel-2)"}}>
+                    <div style={{fontWeight:700, fontSize:13}}>{s}</div>
+                    <div className="num" style={{fontSize:12.5, color:"var(--text-dim)"}}>{r.summary.per[s].MCQ} MCQ · {r.summary.per[s].NUM} numerical</div>
+                  </div>
+                ))}
               </div>
               <button className="btn btn-save" onClick={add} disabled={busy}>{busy ? "Adding…" : "Add this paper"}</button>
             </div>
           )}
           {r.warnings.length>0 && (
-            <details style={{marginTop:10}} open={r.errors.length===0 && r.warnings.length<=5}>
-              <summary style={{cursor:"pointer", color:"var(--marked)", fontWeight:600, fontSize:13}}>{r.warnings.length>=40 ? "40+" : r.warnings.length} warning{r.warnings.length===1?"":"s"} (these do not block adding)</summary>
-              <ul style={{margin:"4px 0 0", paddingLeft:18, fontSize:12.5, lineHeight:1.55, color:"var(--text-dim)", maxHeight:200, overflow:"auto"}}>{r.warnings.map((w, i)=><li key={i}>{w}</li>)}</ul>
-            </details>
+            <div style={{marginTop:12, padding:"10px 14px", borderRadius:10, background:"color-mix(in srgb, var(--gold) 12%, var(--panel))", border:"1px solid color-mix(in srgb, var(--gold) 35%, var(--border))"}}>
+              <div style={{display:"flex", alignItems:"center", gap:6, fontWeight:700, fontSize:13}}><Icon name="alert" size={15}/> {r.warnings.length>=40 ? "40+" : r.warnings.length} warning{r.warnings.length===1?"":"s"} <span style={{fontWeight:500, color:"var(--text-dim)"}}>(these do not block adding)</span></div>
+              <ul style={{margin:"6px 0 0", paddingLeft:18, fontSize:12.5, lineHeight:1.55, color:"var(--text-dim)", maxHeight:180, overflow:"auto"}}>{r.warnings.map((w, i)=><li key={i}>{w}</li>)}</ul>
+            </div>
           )}
         </div>
       )}

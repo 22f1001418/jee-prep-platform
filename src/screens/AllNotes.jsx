@@ -1,4 +1,5 @@
 import {Icon} from "../components/icons";
+import {EmptyState} from "../components/ui";
 import React, {useEffect, useMemo, useState} from "react";
 import {QuestionBody} from "../components/NoteEditor";
 import {fmtAttemptDate} from "../lib/constants";
@@ -185,11 +186,12 @@ export function AllNotesScreen({onBack}){
   }
 
   return (
-    <div style={{minHeight:"100vh", padding:"28px 20px"}}>
-      <div style={{maxWidth:820, margin:"0 auto"}}>
-        <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", gap:10, flexWrap:"wrap"}}>
-          <div style={{display:"flex", alignItems:"center", gap:12, margin:"0 0 16px"}}><span className="icon-tile"><Icon name="notes" size={22}/></span><h2 style={{margin:0}}>All Notes ({shownCount})</h2></div>
-          <div style={{position:"relative", marginBottom:16, display:"flex", gap:10, alignItems:"center", flexWrap:"wrap"}}>
+    <div className="page">
+      <div>
+        <div className="page-head">
+          <span className="icon-tile"><Icon name="notes" size={22}/></span>
+          <div style={{minWidth:0}}><h1 style={{margin:0, fontSize:26}}>All Notes ({shownCount})</h1><p>Every note you've written, across every paper and every attempt, in one place.</p></div>
+          <div className="page-head-actions" style={{position:"relative"}}>
             <button className="btn" onClick={()=>setFilterOpen(o=>!o)} aria-haspopup="true" aria-expanded={filterOpen} style={{fontFamily:"Arial, Helvetica, sans-serif", fontWeight:400}}>
               Filter <Icon name="chevron-down" size={14}/>
             </button>
@@ -218,9 +220,6 @@ export function AllNotesScreen({onBack}){
             )}
           </div>
         </div>
-        <p style={{fontSize:13.5, color:"var(--text-dim)", marginTop:-6, marginBottom:20}}>
-          Every note you've written, across every paper and every attempt, in one place.
-        </p>
 
         {chap && (
           <div style={{display:"flex", alignItems:"center", gap:8, marginBottom:16, flexWrap:"wrap", fontSize:13}}>
@@ -238,9 +237,9 @@ export function AllNotesScreen({onBack}){
           </div>
         )}
         {totalNotes===0 && (
-          <div className="card" style={{padding:30, textAlign:"center", color:"var(--text-dim)"}}>
-            No notes yet. While reviewing a completed test's analysis, open the Notes tab and use "Add note" on any question.
-          </div>
+          <EmptyState icon="notes" title="No notes yet">
+            While reviewing a completed test's analysis, open the Notes tab and use "Add note" on any question.
+          </EmptyState>
         )}
 
         <div style={{display:"flex", flexDirection:"column", gap:22}}>

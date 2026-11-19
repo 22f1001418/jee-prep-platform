@@ -40,7 +40,7 @@ export function Heatmap({weeks = 26}){
         ))}
       </div>
       <div style={{display:"flex", alignItems:"center", gap:5, justifyContent:"flex-end", fontSize:11.5, color:"var(--text-faint)", marginTop:8}}>
-        Less {[0, 1, 2, 3, 4].map(l=><span key={l} className={"heat-cell l" + l} style={{width:11, height:11}}/>)} More
+        Less {[["No questions", 0], ["1-9 questions", 1], ["10-24 questions", 2], ["25-49 questions", 3], ["50 or more", 4]].map(([t, l])=><span key={l} title={t} className={"heat-cell l" + l} style={{width:11, height:11}}/>)} More
       </div>
       </div>
       <div className="heat-stats">

@@ -5,6 +5,13 @@ import {store} from "../lib/store";
 import {downloadBlob, fileStamp} from "../lib/zip";
 
 const BACKUP_FORMAT = "jee-cbt-backup";
+const LS_LAST_BACKUP = "jee_cbt_lastbackup_v1";
+function lastBackupLabel(){
+  const t = Number(store.getItem(LS_LAST_BACKUP));
+  if(!t) return {text:"No backup yet. Download one so your history and notes are safe.", warn:true};
+  const days = Math.floor((Date.now() - t) / 86400000);
+  return {text: days<=0 ? "Last backup: today" : `Last backup: ${days} day${days===1?"":"s"} ago`, warn: days>=14};
+}
 
 export function BackupPanel(){
   const fileRef = useRef(null);
@@ -17,6 +24,7 @@ export function BackupPanel(){
       const n = Object.keys(data).length;
       const blob = new Blob([JSON.stringify({format:BACKUP_FORMAT, version:1, exportedAt:new Date().toISOString(), data})], {type:"application/json"});
       downloadBlob(blob, `JEE_CBT_backup_${fileStamp(Date.now())}.json`);
+      store.setItem(LS_LAST_BACKUP, String(Date.now()));
       setMsg({ok:true, text:`Backup downloaded (${n} saved item${n===1?"":"s"}: history, notes, stars, added papers, profile and settings).`});
     }catch(e){ setMsg({ok:false, text:"Backup failed: " + (e && e.message ? e.message : e)}); }
   }
@@ -47,8 +55,12 @@ export function BackupPanel(){
     }catch(e){ setMsg({ok:false, text:"Could not add the backup (browser storage problem): " + (e && e.message ? e.message : e)}); }
   }
   const parts = plan ? describeCounts(plan.merge.counts) : [];
+  const last = lastBackupLabel();
   return (
     <div style={{marginTop:10, fontSize:12.5, color:"var(--text-dim)"}}>
+      <div style={{marginBottom:10, fontWeight:650, color: last.warn ? "var(--marked)" : "var(--text-dim)", display:"flex", alignItems:"center", gap:6}}>
+        <Icon name={last.warn ? "alert" : "check-circle"} size={15}/> {last.text}
+      </div>
       <div style={{display:"flex", gap:8, flexWrap:"wrap", alignItems:"center"}}>
         <button className="btn" onClick={backup} title="Save all your history, notes, stars, added papers and settings to one file"><Icon name="download" size={16}/> Backup data</button>
         <button className="btn" onClick={()=>fileRef.current && fileRef.current.click()} title="Add the contents of a backup file to what is on this device. Nothing you already have is replaced or removed."><Icon name="upload" size={16}/> Append backup</button>

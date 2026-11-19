@@ -5,6 +5,9 @@ import {PageHeader} from "../components/ui";
 import {PAPER_REGISTRY, scoredCounts} from "../lib/papers";
 import {loadHistory} from "../lib/persistence";
 
+// "27 jan", "jan 2024" and "08 apr" all work: case and leading zeros are ignored
+const norm = s => String(s).toLowerCase().replace(/\b0+(\d)/g, "$1");
+const matches = (p, q) => { const n = norm(q).trim(); return !n || n.split(/\s+/).every(w => norm(`${p.name} ${p.shortName} ${yearOf(p)}`).includes(w)); };
 const yearOf = p => { const m = /^jee-(\d{4})-/.exec(p.id); return m ? m[1] : "Other"; };
 
 function Filter({on, children, onClick}){
@@ -16,6 +19,7 @@ export function Tests({onStartPaper, onResume, hasActive}){
   const [year, setYear] = useState("all");
   const [show, setShow] = useState("all");   // all | todo | done
   const [adding, setAdding] = useState(false);
+  const [query, setQuery] = useState("");
   const stats = useMemo(()=>{
     const m = new Map();
     loadHistory().forEach(h=>{
@@ -30,7 +34,7 @@ export function Tests({onStartPaper, onResume, hasActive}){
   const years = useMemo(()=>[...new Set(PAPER_REGISTRY.map(yearOf))], []);
   const done = PAPER_REGISTRY.filter(p=>stats.has(p.id)).length;
   const groups = years.filter(y=>year==="all" || y===year).map(y=>{
-    const all = PAPER_REGISTRY.filter(p=>yearOf(p)===y);
+    const all = PAPER_REGISTRY.filter(p=>yearOf(p)===y && matches(p, query));
     return {year:y, total:all.length, attempted:all.filter(p=>stats.has(p.id)).length,
       papers: all.filter(p=>show==="all" || (show==="done" ? stats.has(p.id) : !stats.has(p.id)))};
   }).filter(g=>g.papers.length);
@@ -52,6 +56,11 @@ export function Tests({onStartPaper, onResume, hasActive}){
       </div>
       <AddPaperPanel open={adding} onClose={()=>setAdding(false)}/>
 
+      <div style={{position:"relative", marginBottom:12}}>
+        <span style={{position:"absolute", left:12, top:"50%", transform:"translateY(-50%)", color:"var(--text-faint)", display:"flex"}}><Icon name="search" size={16}/></span>
+        <input type="search" value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search papers, e.g. 27 Jan or 2024" aria-label="Search papers"
+          style={{width:"100%", boxSizing:"border-box", padding:"10px 12px 10px 36px", borderRadius:10, border:"1px solid var(--border-dark)", background:"var(--panel)", color:"var(--text)", font:"inherit", fontSize:14}}/>
+      </div>
       <div style={{display:"flex", gap:8, flexWrap:"wrap", marginBottom:10}}>
         <Filter on={year==="all"} onClick={()=>setYear("all")}>All years</Filter>
         {years.map(y=><Filter key={y} on={year===y} onClick={()=>setYear(y)}>{y}</Filter>)}
@@ -82,12 +91,12 @@ export function Tests({onStartPaper, onResume, hasActive}){
                   </div>
                   {s ? (
                     <div style={{display:"flex", gap:8, flexWrap:"wrap", alignItems:"center"}}>
-                      <span className="chip chip-soft num" title="Best score">Best {s.best}/{s.max}</span>
+                      <span className="chip chip-good num" title="Best score">Best {s.best}/{s.max}</span>
                       <span className="chip" title="Accuracy on the last attempt">{s.lastPct}% accuracy</span>
                       <span className="chip" title="Attempts">{s.n}x</span>
                     </div>
                   ) : <span className="chip">New</span>}
-                  {p.custom && <span className="chip chip-soft" title="A paper you added from an add-on file">Added by you</span>}
+                  {p.custom && <span className="chip" style={{color:"var(--text-faint)", fontWeight:550}} title="A paper you added from an add-on file">Added by you</span>}
                   <button className={s ? "btn" : "btn btn-primary"} onClick={()=>onStartPaper(p.id)}>{s ? <><Icon name="refresh" size={15}/> Retake</> : <><Icon name="play" size={15}/> Start</>}</button>
                 </div>
               );

@@ -15,9 +15,10 @@ export const NAV = [
   {id:"tests",    label:"Mock Tests",   icon:"tests",    group:"Tests", short:"Tests"},
   {id:"history",  label:"History",      icon:"history",  group:"Tests"},
   {id:"allnotes", label:"Notes",        icon:"notes",    group:"Library"},
+  {id:"starredq", label:"Starred",      icon:"star",     group:"Library"},
 ];
 // screens that belong to a nav item without being one themselves
-const PARENT = {starredq:"allnotes"};
+const PARENT = {};
 const BOTTOM = ["home", "tests", "practice", "mistakes", "history", "allnotes"];
 
 export function AppShell({screen, onNavigate, onEditProfile, onOpenSearch, children}){

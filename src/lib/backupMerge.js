@@ -17,7 +17,7 @@ const K = {
   starQ:"jee_cbt_starred_questions_v1", mistakes:"jee_cbt_mistakes_v1", practice:"jee_cbt_practice_v1",
   keyOvr:"jee_cbt_key_overrides_v1", celebrated:"jee_cbt_celebrated_v1",
 };
-const NEVER = new Set(["jee_cbt_active_v1", "jee_cbt_practice_active_v1", "jee_cbt_scratch_v1", "jee_cbt_practice_cfg_v1", "jee_cbt_theme_v1", "jee_cbt_selected_paper_v1", "jee_cbt_access_code_v1"]);
+const NEVER = new Set(["jee_cbt_active_v1", "jee_cbt_practice_active_v1", "jee_cbt_scratch_v1", "jee_cbt_practice_cfg_v1", "jee_cbt_theme_v1", "jee_cbt_lastbackup_v1", "jee_cbt_selected_paper_v1", "jee_cbt_access_code_v1"]);
 const CPAPER = "jee_cbt_cpaper_v1:";
 const HISTORY_CAP = 100, MAX_HITS = 30, MAX_LOG = 40, MAX_SESSIONS = 60;
 

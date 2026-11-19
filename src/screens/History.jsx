@@ -1,5 +1,6 @@
 import {BackupPanel} from "../components/BackupPanel";
 import {Icon} from "../components/icons";
+import {EmptyState} from "../components/ui";
 import React, {useEffect, useMemo, useState} from "react";
 import {LS_HISTORY, fmtAttemptDate} from "../lib/constants";
 import {LS_NOTES, LS_NOTE_HL, LS_NOTE_IMG, deleteAllNotes, deleteNotesForAttempt, deleteNotesForAttempts} from "../lib/notes";
@@ -195,7 +196,7 @@ export function StorageMeter({refreshKey}){
   );
 }
 
-export function HistoryScreen({onBack, onOpenTest}){
+export function HistoryScreen({onBack, onOpenTest, onNavigate}){
   const [history, setHistory] = useState(loadHistory());
   const [sortMode, setSortMode] = useState("latest");      // "latest" | "exam"
   const [examNewestFirst, setExamNewestFirst] = useState(false);
@@ -248,11 +249,12 @@ export function HistoryScreen({onBack, onOpenTest}){
   }, [groups, sortMode, examNewestFirst]);
 
   return (
-    <div style={{minHeight:"100vh", padding:"28px 20px"}}>
-      <div style={{maxWidth:760, margin:"0 auto"}}>
-        <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16, flexWrap:"wrap", gap:10}}>
-          <div style={{display:"flex", alignItems:"center", gap:12}}><span className="icon-tile"><Icon name="history" size={22}/></span><h2 style={{margin:0}}>Test History ({history.length})</h2></div>
-          <div style={{display:"flex", alignItems:"center", gap:10, flexWrap:"wrap"}}>
+    <div className="page" style={{maxWidth:820}}>
+      <div>
+        <div className="page-head">
+          <span className="icon-tile"><Icon name="history" size={22}/></span>
+          <div style={{minWidth:0}}><h1 style={{margin:0, fontSize:26}}>Test History ({history.length})</h1><p>Every test you have finished, grouped by paper.</p></div>
+          <div className="page-head-actions" style={{alignItems:"center"}}>
           {history.length>0 && (
             <div style={{position:"relative"}}>
               <button className="btn" onClick={()=>setFilterOpen(o=>!o)} aria-haspopup="true" aria-expanded={filterOpen} style={{fontFamily:"Arial, Helvetica, sans-serif", fontWeight:400}}>
@@ -301,12 +303,18 @@ export function HistoryScreen({onBack, onOpenTest}){
           )}
           </div>
         </div>
-        <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", gap:10, marginBottom:12, position:"relative"}}>
-          <span/>
-          <StorageMeter refreshKey={history.length}/>
+        <div className="card" style={{padding:"14px 18px", marginBottom:18}}>
+          <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", gap:12, flexWrap:"wrap"}}>
+            <div style={{display:"flex", alignItems:"center", gap:8, fontWeight:700, fontSize:15}}><Icon name="shield-check" size={18}/> Your data</div>
+            <StorageMeter refreshKey={history.length}/>
+          </div>
+          <BackupPanel/>
         </div>
-        <div style={{marginBottom:14}}><BackupPanel/></div>
-        {history.length===0 && <div className="card" style={{padding:30, textAlign:"center", color:"var(--text-dim)"}}>No completed tests yet.</div>}
+        {history.length===0 && (
+          <EmptyState icon="history" title="No completed tests yet" action={onNavigate ? <button className="btn btn-primary" onClick={()=>onNavigate("tests")}><Icon name="play" size={15}/> Go to Mock Tests</button> : null}>
+            Finish a mock test and it will show up here with your score, notes and analysis.
+          </EmptyState>
+        )}
         <div style={{display:"flex", flexDirection:"column", gap:14}}>
           {sortedGroups.map(group=>(
             <PaperHistoryGroup key={group.paperId} group={group} onOpenTest={onOpenTest}

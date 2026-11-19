@@ -339,7 +339,7 @@ export function App(){
   if(screen==="tests") return shellWrap(<Tests onStartPaper={startPaper} onResume={resumeActive} hasActive={hasActive}/>);
   if(screen==="profile") return <ProfileScreen onSave={actuallyStartDemo} onBack={backHome}/>;
   if(screen==="editprofile") return <ProfileScreen edit onSave={backHome} onBack={backHome}/>;
-  if(screen==="history") return shellWrap(<HistoryScreen onBack={backHome} onOpenTest={openHistoryTest}/>);
+  if(screen==="history") return shellWrap(<HistoryScreen onBack={backHome} onOpenTest={openHistoryTest} onNavigate={navigate}/>);
   if(screen==="practice") return shellWrap(
     <PracticeSetup key={JSON.stringify(practiceInitial)} initial={practiceInitial} onBack={backHome} onStart={s=>{ saveSession(s); setScreen("practicerun"); }}
       onResume={()=>setScreen("practicerun")} onOpenResults={()=>setScreen("practicerun")} onOpenMistakes={()=>setScreen("mistakes")}/>
