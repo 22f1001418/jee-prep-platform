@@ -1,9 +1,7 @@
 import {BackupPanel} from "../components/BackupPanel";
 import {Icon} from "../components/icons";
 import React, {useEffect, useMemo, useState} from "react";
-import {exportChapterReport} from "../lib/chapterReport";
 import {LS_HISTORY, fmtAttemptDate} from "../lib/constants";
-import {ExportDoneModal, attemptKeyOfEntry, estimateAttemptBytes, exportEverythingFile, exportFolderZip, exportOldestZip, removeExportedAttempts} from "../lib/exportArchive";
 import {LS_NOTES, LS_NOTE_HL, LS_NOTE_IMG, deleteAllNotes, deleteNotesForAttempt, deleteNotesForAttempts} from "../lib/notes";
 import {clearAllHistory, deleteHistoryEntries, deleteHistoryEntry, loadHistory} from "../lib/persistence";
 import {store} from "../lib/store";
@@ -205,24 +203,6 @@ export function HistoryScreen({onBack, onOpenTest}){
   const [confirmIdx, setConfirmIdx] = useState(null);
   const [confirmGroup, setConfirmGroup] = useState(null); // paperId whose delete is awaiting confirmation
   const [confirmClearAll, setConfirmClearAll] = useState(false);
-  const [exportOpen, setExportOpen] = useState(false);
-  const [exporting, setExporting] = useState("");
-  const [exportInfo, setExportInfo] = useState(null);   // result of the last export: offers to free that space
-  async function runExport(kind){
-    setExportOpen(false); setExporting(kind);
-    try{
-      const entries = loadHistory();
-      const info = kind==="all" ? await exportEverythingFile(entries) : kind==="oldest" ? await exportOldestZip(entries) : await exportFolderZip(entries);
-      info.freeBytes = estimateAttemptBytes(entries.filter(e=>info.keys.includes(attemptKeyOfEntry(e))));
-      setExportInfo(info);
-    }catch(err){ window.alert("Export failed: " + (err && err.message ? err.message : err)); }
-    setExporting("");
-  }
-  function removeExported(){
-    if(!removeExportedAttempts(exportInfo.keys)) window.alert("Could not update the saved history (browser storage problem).");
-    setHistory(loadHistory()); setExportInfo(null); setConfirmIdx(null); setConfirmGroup(null);
-  }
-
   function removeOne(i){
     const h = history[i];
     if(h && h.snapshot && h.snapshot.paperId && h.snapshot.startedAt){
@@ -275,31 +255,6 @@ export function HistoryScreen({onBack, onOpenTest}){
           <div style={{display:"flex", alignItems:"center", gap:10, flexWrap:"wrap"}}>
           {history.length>0 && (
             <div style={{position:"relative"}}>
-              <button className="btn btn-primary" disabled={!!exporting} onClick={()=>setExportOpen(o=>!o)} aria-haspopup="true" aria-expanded={exportOpen}>
-                {exporting ? "Exporting…" : <>Export <Icon name="chevron-down" size={14}/></>}
-              </button>
-              {exportOpen && (
-                <React.Fragment>
-                  <div onClick={()=>setExportOpen(false)} style={{position:"fixed", inset:0, zIndex:20}}/>
-                  <div className="card" style={{position:"absolute", right:0, top:"calc(100% + 6px)", zIndex:21, width:330, padding:8, boxShadow:"0 8px 24px rgba(0,0,0,0.18)"}}>
-                    {[["all","Export everything","One file: every test with its notes and analysis"],["oldest","Export 10 oldest attempted tests","The 10 oldest attempts as a ZIP, one file per test"],["folder","Export all tests as a folder","A ZIP with one separate file per test"]].map(([k,t,d])=>(
-                      <button key={k} className="btn" onClick={()=>runExport(k)} style={{display:"block", width:"100%", textAlign:"left", border:"none", background:"transparent", padding:"10px", fontWeight:400}}>
-                        <div style={{fontWeight:500, fontSize:14, color:"var(--text)"}}>{t}</div>
-                        <div style={{fontSize:12, color:"var(--text-faint)", marginTop:2}}>{d}</div>
-                      </button>
-                    ))}
-                    <div style={{borderTop:"1px solid var(--border)", margin:"6px 0"}}/>
-                    <button className="btn" onClick={()=>{ setExportOpen(false); exportChapterReport(); }} style={{display:"block", width:"100%", textAlign:"left", border:"none", background:"transparent", padding:"10px", fontWeight:400}}>
-                      <div style={{fontWeight:500, fontSize:14, color:"var(--text)"}}>Chapter wise AI report</div>
-                      <div style={{fontSize:12, color:"var(--text-faint)", marginTop:2}}>Made for AI, from your latest 10 exams</div>
-                    </button>
-                  </div>
-                </React.Fragment>
-              )}
-            </div>
-          )}
-          {history.length>0 && (
-            <div style={{position:"relative"}}>
               <button className="btn" onClick={()=>setFilterOpen(o=>!o)} aria-haspopup="true" aria-expanded={filterOpen} style={{fontFamily:"Arial, Helvetica, sans-serif", fontWeight:400}}>
                 Filter <Icon name="chevron-down" size={14}/>
               </button>
@@ -349,7 +304,6 @@ export function HistoryScreen({onBack, onOpenTest}){
         <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", gap:10, marginBottom:12, position:"relative"}}>
           <span/>
           <StorageMeter refreshKey={history.length}/>
-          {exportInfo && <ExportDoneModal info={exportInfo} freeBytes={exportInfo.freeBytes||0} onKeep={()=>setExportInfo(null)} onRemove={removeExported}/>}
         </div>
         <div style={{marginBottom:14}}><BackupPanel/></div>
         {history.length===0 && <div className="card" style={{padding:30, textAlign:"center", color:"var(--text-dim)"}}>No completed tests yet.</div>}

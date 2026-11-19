@@ -8,6 +8,7 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import { initStore, store } from "./lib/store";
 import { loadData } from "./lib/data";
+import { loadCustomPapers } from "./lib/customPapers";
 import { showStorageBanner } from "./lib/storageAlerts";
 
 const root = createRoot(document.getElementById("root"));
@@ -19,6 +20,7 @@ async function boot() {
   await initStore();
   store.onError(() => showStorageBanner("Could not save to this browser's storage. Your data is still on screen; export a backup soon."));
   await loadData();
+  loadCustomPapers();   // papers added from add-on files join the built-in bank before the app code reads it
   try { if (window.MathJax && window.MathJax.startup && window.MathJax.startup.promise) await window.MathJax.startup.promise; } catch (e) { /* math just will not render */ }
   const [{ App }, { ErrorBoundary }, { rescoreHistory }] = await Promise.all([
     import("./App"), import("./components/ErrorBoundary"), import("./lib/scoring"),

@@ -123,13 +123,6 @@ export const store = {
     mem.forEach((v, k) => { if (k !== MIGRATED_FLAG && k.startsWith(KEY_PREFIX) && !LOCAL_ONLY.has(k)) o[k] = v; });
     return o;
   },
-  // Replace (or merge into) the saved data with a backup. Returns how many keys were written.
-  restore(obj, { replace = true } = {}) {
-    const incoming = Object.keys(obj).filter(k => k.startsWith(KEY_PREFIX) && !LOCAL_ONLY.has(k) && typeof obj[k] === "string");
-    if (replace) this.keys().filter(k => k.startsWith(KEY_PREFIX) && !LOCAL_ONLY.has(k)).forEach(k => this.removeItem(k));
-    incoming.forEach(k => this.setItem(k, obj[k]));
-    return incoming.length;
-  },
   flushNow() { return flush(); },
   onError(fn) { errorHandler = fn; },
   get backend() { return useLocalStorage ? "localStorage" : "indexedDB"; },
