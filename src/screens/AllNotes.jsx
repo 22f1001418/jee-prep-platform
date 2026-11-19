@@ -133,7 +133,7 @@ export function SubjectChapterTree({tree, subjOrder, chap, onChoose, noun}){
     </React.Fragment>
   );
 }
-export function AllNotesScreen({onBack, onViewStarredQ}){
+export function AllNotesScreen({onBack}){
   const [refreshTick, setRefreshTick] = useState(0);
   const groups = useMemo(()=>collectAllNotes(), [refreshTick]);
   const totalNotes = groups.reduce((s,g)=>s+g.attempts.reduce((s2,a)=>s2+a.notes.length,0), 0);
@@ -190,9 +190,6 @@ export function AllNotesScreen({onBack, onViewStarredQ}){
         <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", gap:10, flexWrap:"wrap"}}>
           <div style={{display:"flex", alignItems:"center", gap:12, margin:"0 0 16px"}}><span className="icon-tile"><Icon name="notes" size={22}/></span><h2 style={{margin:0}}>All Notes ({shownCount})</h2></div>
           <div style={{position:"relative", marginBottom:16, display:"flex", gap:10, alignItems:"center", flexWrap:"wrap"}}>
-            <button className="btn" onClick={onViewStarredQ} style={{fontFamily:"Arial, Helvetica, sans-serif", fontWeight:400}}>
-              <Icon name="star" size={15}/> Starred Questions
-            </button>
             <button className="btn" onClick={()=>setFilterOpen(o=>!o)} aria-haspopup="true" aria-expanded={filterOpen} style={{fontFamily:"Arial, Helvetica, sans-serif", fontWeight:400}}>
               Filter <Icon name="chevron-down" size={14}/>
             </button>

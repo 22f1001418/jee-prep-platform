@@ -346,7 +346,7 @@ export function App(){
   );
   if(screen==="practicerun") return <PracticeSession onExit={()=>setScreen("practice")} onSetup={()=>setScreen("practice")} onOpenMistakes={()=>setScreen("mistakes")}/>;
   if(screen==="mistakes") return shellWrap(<MistakeBook onBack={()=>setScreen(examState && result ? "results" : "home")}/>);
-  if(screen==="allnotes") return shellWrap(<AllNotesScreen onBack={backHome} onViewStarredQ={()=>setScreen("starredq")}/>);
+  if(screen==="allnotes") return shellWrap(<AllNotesScreen onBack={backHome}/>);
   if(screen==="starredq") return shellWrap(<StarredQuestionsScreen onBack={()=>setScreen("allnotes")}/>);
   if(screen==="preview") return (
     <PaperContext.Provider value={examPaper}>
