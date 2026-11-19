@@ -503,6 +503,8 @@ input:focus-visible, button:focus-visible, select:focus-visible{outline:2px soli
 .heat-cell.l2{background:color-mix(in srgb, var(--brand) 52%, var(--panel));}
 .heat-cell.l3{background:color-mix(in srgb, var(--brand) 78%, var(--panel));}
 .heat-cell.l4{background:linear-gradient(135deg, var(--brand), var(--brand-2)); box-shadow:0 0 10px color-mix(in srgb, var(--brand) 45%, transparent);}
+/* each column is its own stacking context (entrance animation), so lift the hovered one above its neighbours or they cover the tooltip */
+.heat-col:hover{position:relative; z-index:10;}
 .heat-col .heat-cell:hover{transform:scale(1.35); outline-color:color-mix(in srgb, var(--brand) 60%, transparent); z-index:6;}
 .heat-col .heat-cell[data-tip]:hover::after{content:attr(data-tip); position:absolute; left:50%; bottom:calc(100% + 8px); transform:translateX(-50%) scale(.74); transform-origin:bottom center; white-space:nowrap; padding:6px 10px; border-radius:8px; font-size:13px; font-weight:650; background:#101828; color:#fff; box-shadow:var(--shadow-md); pointer-events:none;}
 .heat-col:nth-child(-n+4) .heat-cell[data-tip]:hover::after{left:0; transform:scale(.74); transform-origin:bottom left;}
