@@ -1,4 +1,5 @@
 import React, {useMemo, useState} from "react";
+import {AddPaperPanel} from "../components/AddPaperPanel";
 import {Icon} from "../components/icons";
 import {PageHeader} from "../components/ui";
 import {PAPER_REGISTRY, scoredCounts} from "../lib/papers";
@@ -14,6 +15,7 @@ function Filter({on, children, onClick}){
 export function Tests({onStartPaper, onResume, hasActive}){
   const [year, setYear] = useState("all");
   const [show, setShow] = useState("all");   // all | todo | done
+  const [adding, setAdding] = useState(false);
   const stats = useMemo(()=>{
     const m = new Map();
     loadHistory().forEach(h=>{
@@ -46,7 +48,9 @@ export function Tests({onStartPaper, onResume, hasActive}){
           <div style={{height:8, background:"var(--border)", borderRadius:5, overflow:"hidden"}}><div style={{width:`${Math.max(pct, done ? 2 : 0)}%`, height:"100%", borderRadius:5, background:"linear-gradient(90deg, var(--brand), var(--brand-2))", transition:"width .8s var(--ease)"}}/></div>
         </div>
         {hasActive && <button className="btn btn-save" onClick={onResume}><Icon name="play" size={16}/> Resume test in progress</button>}
+        <button className="btn" onClick={()=>setAdding(a=>!a)} aria-expanded={adding}><Icon name="plus" size={16}/> Add paper</button>
       </div>
+      <AddPaperPanel open={adding} onClose={()=>setAdding(false)}/>
 
       <div style={{display:"flex", gap:8, flexWrap:"wrap", marginBottom:10}}>
         <Filter on={year==="all"} onClick={()=>setYear("all")}>All years</Filter>
@@ -83,6 +87,7 @@ export function Tests({onStartPaper, onResume, hasActive}){
                       <span className="chip" title="Attempts">{s.n}x</span>
                     </div>
                   ) : <span className="chip">New</span>}
+                  {p.custom && <span className="chip chip-soft" title="A paper you added from an add-on file">Added by you</span>}
                   <button className={s ? "btn" : "btn btn-primary"} onClick={()=>onStartPaper(p.id)}>{s ? <><Icon name="refresh" size={15}/> Retake</> : <><Icon name="play" size={15}/> Start</>}</button>
                 </div>
               );

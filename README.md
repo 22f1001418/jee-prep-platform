@@ -57,7 +57,7 @@ Every wrong answer from a finished test is added to the Mistake Book automatical
 Questions come back for revision on a ladder of 1, 3, 7, 14, 30 and 60 days; a wrong answer sends a question back to tomorrow, and passing the
 last step marks it mastered. Revision sessions are graded automatically against the answer key. The Insights tab shows your mix of causes, weakest
 chapters and a test-by-test view. Your cause tags are also included in the "Export for AI analysis" file. The data lives in the browser store
-(`jee_cbt_mistakes_v1`) and is part of Backup / Restore.
+(`jee_cbt_mistakes_v1`) and is part of Backup / Append backup.
 
 ## Practice mode
 
@@ -69,7 +69,17 @@ Wrong answers go into the Mistake Book; the results screen lets you tag the caus
 ## Where your data lives
 
 History, notes, stars and settings are stored in the browser's IndexedDB. Use **Test History → Backup data** regularly: clearing site data deletes everything.
-Data from the old single-file version can be brought over; see the note under the backup buttons.
+**Append backup** adds a backup file to what is already on the device and never replaces or removes anything: attempts, notes, starred questions, Mistake Book entries,
+practice sessions, answer-key corrections and added papers that are missing here are added (a note you already have for a question is kept as it is), and you see what will be added before confirming.
+A test in progress, rough work and the theme are never touched. Data from the old single-file version can be brought over the same way; see the note under the backup buttons.
+
+## Adding a new paper
+
+**Mock Tests → Add paper** takes a `<paperId>_addon.json` made with `Master_Prompt_Addon_JSON_2024_and_older.md` (90-question papers, 2021-2024; the 75-question prompt for 2025 onwards
+produces the same file format, `jee-cbt-paper-addon-v1`). The file is checked first (id pattern and uniqueness, 75- or 90-question structure, numbering, options and answers, figure links and
+data URIs, percentile link, text the app cannot show such as Markdown or `|` tables) and is only added if there are no errors; warnings do not block. An added paper is stored on the device
+(`jee_cbt_cpaper_v1:<id>` in the store), shows an "Added by you" chip, is part of Backup / Append backup, and can be removed again from the same panel.
+The checks live in `src/lib/paperAddon.js`, storage in `src/lib/customPapers.js`.
 
 ## Deploy (Vercel)
 
