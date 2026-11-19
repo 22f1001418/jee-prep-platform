@@ -5,7 +5,7 @@ import {PAPER_REGISTRY, paperMissing} from "./papers";
 import {loadHistory} from "./persistence";
 import {isAnswerCorrect, scoreExam} from "./scoring";
 import {store} from "./store";
-import {loadStarQ} from "../screens/ProfileScreen";
+import {loadStarQ, starQKey} from "../screens/ProfileScreen";
 
 // ---------- Practice mode: custom question sets from the whole question bank ----------
 //
@@ -94,7 +94,7 @@ export function chapterAccuracy(stats, subject, chapter){
 // ---------- building a set ----------
 export function poolContext(stats){
   const mistakes = new Set(Object.values(loadMistakes()).filter(i => i.status==="active").map(i => i.key));
-  const starred = new Set(loadStarQ());
+  const starred = new Set(loadStarQ().map(x => starQKey(x.paperId, x.n)));   // keys are "paperId:n", the same as a question's key
   return {stats: stats || attemptStats(), mistakes, starred};
 }
 export function buildPool(cfg, ctx){

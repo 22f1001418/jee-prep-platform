@@ -101,8 +101,19 @@ export function ProfileScreen({onSave, onBack, edit}){
 // Stored per paper + question number, independent of attempts, so the same
 // question starred in several attempts shows up once on the Starred Questions page.
 export const LS_STAR_Q = "jee_cbt_starred_questions_v1";
+// Only well-formed entries, one per question (a damaged or hand-edited backup must not break the page or inflate the count).
 export function loadStarQ(){
-  try{ const raw = store.getItem(LS_STAR_Q); const a = raw ? JSON.parse(raw) : []; return Array.isArray(a) ? a : []; }catch(e){ return []; }
+  try{
+    const raw = store.getItem(LS_STAR_Q); const a = raw ? JSON.parse(raw) : [];
+    if(!Array.isArray(a)) return [];
+    const seen = new Set(), out = [];
+    a.forEach(x=>{
+      if(!x || typeof x!=="object" || typeof x.paperId!=="string" || !Number.isInteger(Number(x.n))) return;
+      const k = starQKey(x.paperId, Number(x.n)); if(seen.has(k)) return; seen.add(k);
+      out.push({...x, n:Number(x.n)});
+    });
+    return out;
+  }catch(e){ return []; }
 }
 export function saveStarQ(list){
   try{ store.setItem(LS_STAR_Q, JSON.stringify(list)); return true; }

@@ -21,12 +21,13 @@ export function StarredQuestionsScreen({onBack}){
     paper: pp,
     qs: items.filter(x=>x.paperId===pp.id).map(x=>({it:x, q:pp.questions.find(q=>q.n===x.n)})).filter(x=>x.q).sort((a,b)=>a.q.n-b.q.n),
   })).filter(g=>g.qs.length>0);
-  // Subject -> Chapter filter: the menu counts every question on this page; the list and the heading follow the choice.
-  const tree = buildSubjChapterTree(groups.flatMap(g=>g.qs.map(x=>x.q)));
+  // Subject -> Chapter filter: the menu counts the questions that are still starred; the list and the heading follow the choice.
+  const tree = buildSubjChapterTree(groups.flatMap(g=>g.qs.filter(x=>keys.has(starQKey(x.it.paperId, x.it.n))).map(x=>x.q)));
   const subjOrder = orderSubjects(tree);
   const inChap = q => !chap || (q.subject===chap.subject && (chap.chapter==null || q.chapter===chap.chapter));
   const shownGroups = !chap ? groups : groups.map(g=>({...g, qs:g.qs.filter(x=>inChap(x.q))})).filter(g=>g.qs.length>0);
-  const shownCount = !chap ? keys.size : shownGroups.reduce((n,g)=>n+g.qs.filter(x=>keys.has(starQKey(x.it.paperId, x.it.n))).length, 0);
+  // counts what is listed and still starred (stars of a paper that is gone, or of a removed question, are not listed, so not counted)
+  const shownCount = shownGroups.reduce((n,g)=>n+g.qs.filter(x=>keys.has(starQKey(x.it.paperId, x.it.n))).length, 0);
   return (
     <div style={{minHeight:"100vh", padding:"28px 20px"}}>
       <div style={{maxWidth:820, margin:"0 auto"}}>
