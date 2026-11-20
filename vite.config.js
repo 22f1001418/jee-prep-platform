@@ -2,9 +2,26 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
 
+// Serves /api/* from the api/ folder during `npm run dev`, the same files Vercel runs in production.
+const devApi = () => ({
+  name: "dev-api",
+  configureServer(server){
+    server.middlewares.use(async (req, res, next) => {
+      const m = /^\/api\/([a-z0-9-]+)(?:\?|$)/i.exec(req.url || "");
+      if(!m) return next();
+      try{
+        const mod = await server.ssrLoadModule(`/api/${m[1]}.js`);
+        req.query = Object.fromEntries(new URL(req.url, "http://localhost").searchParams);
+        await mod.default(req, res);
+      }catch(e){ res.statusCode = 404; res.end(String(e && e.message || e)); }
+    });
+  },
+});
+
 export default defineConfig(() => ({
   plugins: [
     react(),
+    devApi(),
     VitePWA({
       registerType: "autoUpdate",
       injectRegister: "auto",
@@ -29,6 +46,7 @@ export default defineConfig(() => ({
         globIgnores: ["figs/**"],
         maximumFileSizeToCacheInBytes: 8 * 1024 * 1024,
         navigateFallback: "/index.html",
+        navigateFallbackDenylist: [/^\/api\//],
         runtimeCaching: [
           {
             urlPattern: ({ url }) => url.pathname.startsWith("/figs/"),

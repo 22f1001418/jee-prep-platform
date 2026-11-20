@@ -7,6 +7,7 @@ import {Heatmap} from "../components/Heatmap";
 import {GOAL_STEPS, activityDays, activityToday, currentStreak, greeting, loadDailyGoal, milestones, questionsToday, saveDailyGoal, weekStrip} from "../lib/activity";
 import {bookSummary, fmtShortDate} from "../lib/mistakes";
 import {PAPER_REGISTRY} from "../lib/papers";
+import {useLivePercentile} from "../lib/useLivePercentile";
 import {GOAL_CHOICES, estimatePercentile, fmtPct, loadGoal, marksForPercentile, saveGoal} from "../lib/percentile";
 import {loadHistory} from "../lib/persistence";
 import {answeredCount, attemptStats, loadSession} from "../lib/practice";
@@ -56,6 +57,7 @@ export function Home({hasActive, onNavigate, onResumeTest, onStartPaper, onPract
   const [daily, setDaily] = useState(()=>loadDailyGoal());
   const book = bookSummary();
   const history = useMemo(()=>loadHistory(), []);               // newest first
+  useLivePercentile(...history.slice(0, 3).map(h=>h && h.snapshot && h.snapshot.paperId));   // live tables for the tests the target card averages
   const stats = useMemo(()=>attemptStats(), []);
   const days = useMemo(()=>activityDays(), []);
   const today = useMemo(()=>({n: questionsToday(), act: activityToday()}), []);

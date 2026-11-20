@@ -3,6 +3,7 @@ import {BarRow} from "./Charts";
 import {fmtMinSec} from "../lib/constants";
 import {CAUSES} from "../lib/mistakes";
 import {fmtPct} from "../lib/percentile";
+import {useLivePercentile} from "../lib/useLivePercentile";
 import {causeBreakdown, paceRule, scenarios} from "../lib/strategy";
 
 const card = {padding:"18px 22px", marginBottom:16};
@@ -13,6 +14,7 @@ const mins = m => `${m} minute${m===1 ? "" : "s"}`;
 
 // "What would have changed my score?" for one finished attempt.
 export function StrategyLab({state, result}){
+  useLivePercentile(state.paperId);
   const [minutes, setMinutes] = useState(3);
   const breakdown = useMemo(()=>causeBreakdown(state, result), [state, result]);
   const rule = useMemo(()=>paceRule(result, minutes), [result, minutes]);

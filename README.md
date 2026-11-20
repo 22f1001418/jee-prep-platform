@@ -41,9 +41,13 @@ with a one-click "Practise". **Mock Tests** lists every paper with your best sco
 
 ## Percentile estimates, strategy lab and exam tools
 
-- **Estimated percentile** (results screen, Home target card, Strategy Lab). Estimates only, never NTA data: a general marks-to-percentile curve from careers360's
-  previous-year table, plus shift-specific tables for the nine 2025 January shifts in the bank (PW's estimates, percentile 90-99 only). Sources and the method are
-  shown in the app and in `src/lib/percentile.js`. Papers without a table use the general curve, which is coarser.
+- **Percentile for the exam you took** (results screen, Home target card, Strategy Lab). When online, the app asks `/api/percentile` (a serverless function in
+  `api/`, reading the sites listed in `server/percentile/sources.js`) for that exact exam's marks-vs-percentile table, so the percentile comes from the table for
+  *that shift*: 2024, 2025 and 2026 papers have shift-wise tables (Physics Wallah, Collegedunia, Careers360, Competishun), 2021 and 2023 have a session-wide table.
+  When several sites cover a shift, the card shows what each one gives and uses the middle value. The tables are cached on the device, so it still works offline
+  after the first look; with no connection or no table it falls back to the built-in estimate in `src/lib/percentile.js`. Adding a site = one row in `sources.js`
+  (the parser understands the common table layouts). NTA publishes no official marks-to-percentile table, so every figure is a site's estimate; your NTA score card has
+  the real one. `npm run dev` serves the same `/api` routes locally.
 - **Target percentile** on Home: pick a goal and see the marks it takes and how far your recent tests are.
 - **Strategy Lab** (a tab on the analysis page): marks lost by cause (from your Mistake Book tags), a "move on after N minutes" what-if, and what your score would be worth in percentile
   if a few things had gone differently.
